@@ -13,13 +13,23 @@
         <nav class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <a href="#" class="w-48">
-                                    <img src="images/logo.svg" alt="SystemsLogiq" class="h-8">
-                                </a>
-                <div class="hidden md:flex space-x-8">
-                    <a href="#services" class="nav-link">Services</a>
-                    <a href="#about" class="nav-link">About</a>
-                    <a href="#solutions" class="nav-link">Solutions</a>
-                    <a href="#contact" class="nav-link">Contact</a>
+                    <img src="images/logo.svg" alt="SystemsLogiq" class="h-8">
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#services" class="nav-link" data-i18n="services">Services</a>
+                    <a href="#about" class="nav-link" data-i18n="about">About</a>
+                    <a href="#solutions" class="nav-link" data-i18n="solutions">Solutions</a>
+                    <a href="#contact" class="nav-link" data-i18n="contact">Contact</a>
+                    <div class="relative ml-4 flex items-center" id="languageSelector">
+                        <button onclick="toggleLanguageDropdown(false)" class="flex items-center space-x-1 px-3 py-1 rounded hover:bg-gray-100 transition-colors">
+                            <span id="currentLanguage">EN</span>
+                            <i class="fas fa-chevron-down text-sm ml-1"></i>
+                        </button>
+                        <div id="languageDropdown" class="absolute right-0 top-full mt-1 py-2 w-24 bg-white rounded-lg shadow-lg hidden z-50">
+                            <button onclick="setLanguage('en')" class="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors">EN</button>
+                            <button onclick="setLanguage('de')" class="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors">DE</button>
+                        </div>
+                    </div>
                 </div>
                 <button class="md:hidden text-gray-600 hover:text-primary" id="menuButton">
                     <i class="fas fa-bars text-2xl"></i>
@@ -28,10 +38,20 @@
             <!-- Mobile Menu -->
             <div class="md:hidden hidden" id="mobileMenu">
                 <div class="flex flex-col space-y-4 mt-4 pb-4">
-                    <a href="#services" class="nav-link">Services</a>
-                    <a href="#about" class="nav-link">About</a>
-                    <a href="#solutions" class="nav-link">Solutions</a>
-                    <a href="#contact" class="nav-link">Contact</a>
+                    <a href="#services" class="nav-link" data-i18n="services">Services</a>
+                    <a href="#about" class="nav-link" data-i18n="about">About</a>
+                    <a href="#solutions" class="nav-link" data-i18n="solutions">Solutions</a>
+                    <a href="#contact" class="nav-link" data-i18n="contact">Contact</a>
+                    <div class="relative flex items-center" id="mobileLanguageSelector">
+                        <button onclick="toggleLanguageDropdown(true)" class="flex items-center space-x-1 px-3 py-1 rounded hover:bg-gray-100 transition-colors">
+                            <span id="mobileLangCurrent">EN</span>
+                            <i class="fas fa-chevron-down text-sm ml-1"></i>
+                        </button>
+                        <div id="mobileLangDropdown" class="absolute left-0 top-full mt-1 py-2 w-24 bg-white rounded-lg shadow-lg hidden z-50">
+                            <button onclick="setLanguage('en')" class="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors">EN</button>
+                            <button onclick="setLanguage('de')" class="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors">DE</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -41,13 +61,15 @@
     <section class="h-[600px] bg-gradient-to-br from-primary to-primary-dark flex items-center relative">
         <div class="container mx-auto px-6 mt-16">
             <div class="text-center text-white">
-                <h1 class="text-4xl md:text-6xl font-bold mb-6 animate-fade-in-up text-shadow">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 animate-fade-in-up text-shadow" data-i18n="heroTitle">
                     Transform Your Business with<br>Intelligent Solutions
                 </h1>
-                <p class="text-xl md:text-2xl mb-8 opacity-90">
+                <p class="text-xl md:text-2xl mb-8 opacity-90" data-i18n="heroSubtitle">
                     Empowering businesses through innovative systems<br>and smart technology integration
                 </p>
-                <button onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})" class="bg-white text-primary hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold text-lg transition-colors duration-300 shadow-lg hover:shadow-xl">
+                <button onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})"
+                        class="bg-white text-primary hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold text-lg transition-colors duration-300 shadow-lg hover:shadow-xl"
+                        data-i18n="getStarted">
                     Get Started
                 </button>
             </div>
@@ -57,35 +79,35 @@
     <!-- Services Section -->
     <section id="services" class="py-20 bg-gray-50">
         <div class="container mx-auto px-6">
-            <h2 class="section-title">Our Services</h2>
+            <h2 class="section-title" data-i18n="ourServices">Our Services</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <div class="card group">
                     <div class="text-primary text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-cogs"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">System Integration</h3>
-                    <p class="text-gray-600">Seamlessly connect your business processes and systems</p>
+                    <h3 class="text-xl font-semibold mb-3" data-i18n="systemIntegration">System Integration</h3>
+                    <p class="text-gray-600" data-i18n="systemIntegrationDesc">Seamlessly connect your business processes and systems</p>
                 </div>
                 <div class="card group">
                     <div class="text-primary text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-chart-line"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Business Analytics</h3>
-                    <p class="text-gray-600">Data-driven insights for informed decision making</p>
+                    <h3 class="text-xl font-semibold mb-3" data-i18n="businessAnalytics">Business Analytics</h3>
+                    <p class="text-gray-600" data-i18n="businessAnalyticsDesc">Data-driven insights for informed decision making</p>
                 </div>
                 <div class="card group">
                     <div class="text-primary text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-robot"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Process Automation</h3>
-                    <p class="text-gray-600">Streamline operations with intelligent automation</p>
+                    <h3 class="text-xl font-semibold mb-3" data-i18n="processAutomation">Process Automation</h3>
+                    <p class="text-gray-600" data-i18n="processAutomationDesc">Streamline operations with intelligent automation</p>
                 </div>
                 <div class="card group">
                     <div class="text-primary text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-cloud"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Cloud Services</h3>
-                    <p class="text-gray-600">Scalable cloud solutions for modern businesses</p>
+                    <h3 class="text-xl font-semibold mb-3" data-i18n="cloudServices">Cloud Services</h3>
+                    <p class="text-gray-600" data-i18n="cloudServicesDesc">Scalable cloud solutions for modern businesses</p>
                 </div>
             </div>
         </div>
@@ -94,9 +116,9 @@
     <!-- About Section -->
     <section id="about" class="py-20">
         <div class="container mx-auto px-6">
-            <h2 class="section-title">About SystemsLogiq</h2>
+            <h2 class="section-title" data-i18n="aboutTitle">About SystemsLogiq</h2>
             <div class="max-w-3xl mx-auto text-center">
-                <p class="text-lg text-gray-700 leading-relaxed">
+                <p class="text-lg text-gray-700 leading-relaxed" data-i18n="aboutText">
                     SystemsLogiq is a leading provider of intelligent business solutions, helping organizations optimize their operations through innovative technology and strategic consulting. With years of industry experience, we deliver customized solutions that drive growth and efficiency.
                 </p>
             </div>
@@ -106,28 +128,28 @@
     <!-- Solutions Section -->
     <section id="solutions" class="py-20 bg-secondary-light">
         <div class="container mx-auto px-6">
-            <h2 class="section-title">Our Solutions</h2>
+            <h2 class="section-title" data-i18n="ourSolutions">Our Solutions</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="card hover:translate-y-[-8px] transition-transform duration-300">
                     <div class="text-primary text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-building"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-4">Enterprise Solutions</h3>
-                    <p class="text-gray-600">Comprehensive systems for large-scale operations</p>
+                    <h3 class="text-xl font-semibold mb-4" data-i18n="enterpriseSolutions">Enterprise Solutions</h3>
+                    <p class="text-gray-600" data-i18n="enterpriseSolutionsDesc">Comprehensive systems for large-scale operations</p>
                 </div>
                 <div class="card hover:translate-y-[-8px] transition-transform duration-300">
                     <div class="text-primary text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-microchip"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-4">Digital Transformation</h3>
-                    <p class="text-gray-600">Guide your business into the digital age</p>
+                    <h3 class="text-xl font-semibold mb-4" data-i18n="digitalTransformation">Digital Transformation</h3>
+                    <p class="text-gray-600" data-i18n="digitalTransformationDesc">Guide your business into the digital age</p>
                 </div>
                 <div class="card hover:translate-y-[-8px] transition-transform duration-300">
                     <div class="text-primary text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-cogs"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-4">Process Automation</h3>
-                    <p class="text-gray-600">Streamline operations with smart automation</p>
+                    <h3 class="text-xl font-semibold mb-4" data-i18n="processAutomationSol">Process Automation</h3>
+                    <p class="text-gray-600" data-i18n="processAutomationSolDesc">Streamline operations with smart automation</p>
                 </div>
             </div>
         </div>
@@ -136,22 +158,22 @@
     <!-- Contact Section -->
     <section id="contact" class="py-20">
         <div class="container mx-auto px-6">
-            <h2 class="section-title">Contact Us</h2>
+            <h2 class="section-title" data-i18n="contactUs">Contact Us</h2>
             <div class="max-w-lg mx-auto">
                 <form id="contactForm" class="space-y-6">
                     <div>
-                        <input type="text" placeholder="Name" required
+                        <input type="text" data-i18n-placeholder="name" required
                             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                     </div>
                     <div>
-                        <input type="email" placeholder="Email" required
+                        <input type="email" data-i18n-placeholder="email" required
                             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                     </div>
                     <div>
-                        <textarea placeholder="Message" required rows="5"
+                        <textarea data-i18n-placeholder="message" required rows="5"
                             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"></textarea>
                     </div>
-                    <button type="submit" class="btn-primary w-full">Send Message</button>
+                    <button type="submit" class="btn-primary w-full" data-i18n="sendMessage">Send Message</button>
                 </form>
             </div>
         </div>
@@ -163,15 +185,15 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                 <div>
                     <h4 class="text-xl font-semibold mb-4">SystemsLogiq</h4>
-                    <p class="text-gray-300">Transforming businesses through intelligent solutions</p>
+                    <p class="text-gray-300" data-i18n="footerTagline">Transforming businesses through intelligent solutions</p>
                 </div>
                 <div>
-                    <h4 class="text-xl font-semibold mb-4">Contact</h4>
-                    <p class="text-gray-300">Email: info@systemslogiq.com</p>
-                    <p class="text-gray-300">Phone: (555) 123-4567</p>
+                    <h4 class="text-xl font-semibold mb-4" data-i18n="contact">Contact</h4>
+                    <p class="text-gray-300"><span data-i18n="emailLabel">Email:</span> info@systemslogiq.com</p>
+                    <p class="text-gray-300"><span data-i18n="phoneLabel">Phone:</span> (555) 123-4567</p>
                 </div>
                 <div>
-                    <h4 class="text-xl font-semibold mb-4">Follow Us</h4>
+                    <h4 class="text-xl font-semibold mb-4" data-i18n="followUs">Follow Us</h4>
                     <div class="flex space-x-4">
                         <a href="#" class="text-gray-300 hover:text-white transition-colors">
                             <i class="fab fa-linkedin text-2xl"></i>
@@ -186,12 +208,87 @@
                 </div>
             </div>
             <div class="mt-12 pt-8 border-t border-gray-700 text-center text-gray-300">
-                <p>&copy; <span id="currentYear"></span> SystemsLogiq. All rights reserved.</p>
+                <p>&copy; <span id="currentYear"></span> SystemsLogiq. <span data-i18n="allRightsReserved">All rights reserved.</span></p>
             </div>
         </div>
     </footer>
 
+    <script src="translations.js"></script>
     <script>
+        // Translation handling
+        function setLanguage(lang) {
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                if (translations[lang] && translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
+                }
+            });
+
+            // Store language preference
+            localStorage.setItem('preferred-language', lang);
+            
+												// Update UI elements for both desktop and mobile
+            const langElements = ['currentLanguage', 'mobileLangCurrent'];
+            langElements.forEach(id => {
+                const element = document.getElementById(id);
+																if (element) {
+                    element.textContent = lang.toUpperCase();
+                }
+            });
+            
+            const dropdowns = ['languageDropdown', 'mobileLangDropdown'];
+            dropdowns.forEach(id => {
+                const dropdown = document.getElementById(id);
+                if (dropdown) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        function toggleLanguageDropdown(isMobile = false) {
+            const dropdownId = isMobile ? 'mobileLangDropdown' : 'languageDropdown';
+            const dropdown = document.getElementById(dropdownId);
+            
+												// Close other dropdown if open
+            const otherDropdownId = isMobile ? 'languageDropdown' : 'mobileLangDropdown';
+            const otherDropdown = document.getElementById(otherDropdownId);
+            if (otherDropdown) {
+                otherDropdown.classList.add('hidden');
+            }
+            
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (event) => {
+            const desktopSelector = document.getElementById('languageSelector');
+            const mobileSelector = document.getElementById('mobileLanguageSelector');
+            
+            if (!desktopSelector?.contains(event.target) && !mobileSelector?.contains(event.target)) {
+                const dropdowns = ['languageDropdown', 'mobileLangDropdown'];
+                dropdowns.forEach(id => {
+                    const dropdown = document.getElementById(id);
+                    if (dropdown) {
+                        dropdown.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // Initialize with stored language preference or default to English
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedLang = localStorage.getItem('preferred-language') || 'en';
+            setLanguage(storedLang);
+        });
         // Mobile menu toggle
         const menuButton = document.getElementById('menuButton');
         const mobileMenu = document.getElementById('mobileMenu');
@@ -247,6 +344,22 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
