@@ -1,21 +1,21 @@
 <svg width="300" height="50" viewBox="0 0 300 50" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g>
         <!-- Regular Hexagon Symbol with rounded corners -->
-        <path d="M33 10
-                 C33 10, 41 18, 41 18
-                 L41 34
-                 C41 34, 33 42, 33 42
-                 C33 42, 25 34, 25 34
-                 L25 18
-                 C25 18, 33 10, 33 10Z"
+        <path d="M30 12
+                 C30 12, 38 20, 38 20
+                 L38 34
+                 C38 34, 30 42, 30 42
+                 C30 42, 22 34, 22 34
+                 L22 20
+                 C22 20, 30 12, 30 12Z"
               stroke="#0066CC" 
-              stroke-width="6"
+              stroke-width="5"
               fill="none"
               stroke-linecap="round"
               stroke-linejoin="round"/>
         
-        <!-- Company Name -->
-        <text x="65" y="32" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#0066CC">
+        <!-- Company Name - moved down to align with hexagon center -->
+        <text x="48" y="36" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#0066CC">
             SystemsLogiq
         </text>
     </g>
