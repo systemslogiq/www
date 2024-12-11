@@ -49,7 +49,7 @@ module.exports = {
             transform: 'translateY(0)',
           },
           '50%': {
-            transform: 'translateY(-10px)',
+            transform: 'translateY(-6px)',
           },
         },
         glow: {
@@ -68,3 +68,4 @@ module.exports = {
   },
   plugins: [],
 }
+
