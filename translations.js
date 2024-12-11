@@ -32,8 +32,8 @@ const translations = {
         enterpriseSolutionsDesc: "Comprehensive systems for large-scale operations",
         digitalTransformation: "Digital Transformation",
         digitalTransformationDesc: "Guide your business into the digital age",
-        processAutomationSol: "Process Automation",
-        processAutomationSolDesc: "Streamline operations with smart automation",
+        digitalExperience: "Digital Experience",
+        digitalExperienceDesc: "Create seamless web and mobile experiences",
 
         // Contact Section
         contactUs: "Contact Us",
@@ -83,8 +83,8 @@ const translations = {
         enterpriseSolutionsDesc: "Umfassende Systeme für Großbetriebe",
         digitalTransformation: "Digitale Transformation",
         digitalTransformationDesc: "Führen Sie Ihr Unternehmen ins digitale Zeitalter",
-        processAutomationSol: "Prozessautomatisierung",
-        processAutomationSolDesc: "Optimieren Sie Abläufe durch intelligente Automatisierung",
+        digitalExperience: "Digitale Erlebnisse",
+        digitalExperienceDesc: "Erstellen Sie nahtlose Web- und Mobile-Erlebnisse",
 
         // Contact Section
         contactUs: "Kontaktieren Sie uns",
@@ -134,8 +134,8 @@ const translations = {
         enterpriseSolutionsDesc: "Sistemas completos para operaciones a gran escala",
         digitalTransformation: "Transformación Digital",
         digitalTransformationDesc: "Guíe su empresa hacia la era digital",
-        processAutomationSol: "Automatización de Procesos",
-        processAutomationSolDesc: "Optimice operaciones con automatización inteligente",
+        digitalExperience: "Experiencia Digital",
+        digitalExperienceDesc: "Cree experiencias web y móviles perfectas",
 
         // Contact Section
         contactUs: "Contáctenos",
@@ -185,8 +185,8 @@ const translations = {
         enterpriseSolutionsDesc: "Systèmes complets pour les opérations à grande échelle",
         digitalTransformation: "Transformation Numérique",
         digitalTransformationDesc: "Guidez votre entreprise vers l'ère numérique",
-        processAutomationSol: "Automatisation des Processus",
-        processAutomationSolDesc: "Optimisez les opérations avec l'automatisation intelligente",
+        digitalExperience: "Expérience Numérique",
+        digitalExperienceDesc: "Créez des expériences web et mobile harmonieuses",
 
         // Contact Section
         contactUs: "Contactez-nous",
