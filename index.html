@@ -28,6 +28,8 @@
                         <div id="languageDropdown" class="fixed mt-1 py-3 bg-white rounded-lg shadow-lg hidden">
                             <button onclick="setLanguage('en')" class="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors">EN</button>
                             <button onclick="setLanguage('de')" class="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors">DE</button>
+                            <button onclick="setLanguage('es')" class="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors">ES</button>
+                            <button onclick="setLanguage('fr')" class="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors">FR</button>
                         </div>
                     </div>
                 </div>
@@ -214,142 +216,12 @@
     </footer>
 
     <script src="translations.js"></script>
-    <script>
-        // Translation handling
-        function setLanguage(lang) {
-            document.querySelectorAll('[data-i18n]').forEach(element => {
-                const key = element.getAttribute('data-i18n');
-                if (translations[lang] && translations[lang][key]) {
-                    element.textContent = translations[lang][key];
-                }
-            });
-
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
-                const key = element.getAttribute('data-i18n-placeholder');
-                if (translations[lang] && translations[lang][key]) {
-                    element.placeholder = translations[lang][key];
-                }
-            });
-
-            // Store language preference
-            localStorage.setItem('preferred-language', lang);
-            
-												// Update UI elements for both desktop and mobile
-            const langElements = ['currentLanguage', 'mobileLangCurrent'];
-            langElements.forEach(id => {
-                const element = document.getElementById(id);
-																if (element) {
-                    element.textContent = lang.toUpperCase();
-                }
-            });
-            
-            const dropdowns = ['languageDropdown', 'mobileLangDropdown'];
-            dropdowns.forEach(id => {
-                const dropdown = document.getElementById(id);
-                if (dropdown) {
-                    dropdown.classList.add('hidden');
-                }
-            });
-        }
-
-        function toggleLanguageDropdown(isMobile = false) {
-            const dropdownId = isMobile ? 'mobileLangDropdown' : 'languageDropdown';
-            const selectorId = isMobile ? 'mobileLanguageSelector' : 'languageSelector';
-            const dropdown = document.getElementById(dropdownId);
-												const button = document.getElementById(selectorId).querySelector('button');
-            
-            // Close other dropdown if open
-            const otherDropdownId = isMobile ? 'languageDropdown' : 'mobileLangDropdown';
-            const otherDropdown = document.getElementById(otherDropdownId);
-            if (otherDropdown) {
-                otherDropdown.classList.add('hidden');
-            }
-            
-            if (dropdown) {
-                const rect = button.getBoundingClientRect();
-                dropdown.style.top = `${rect.bottom + window.scrollY + 5}px`;
-                dropdown.style.left = `${rect.left - 10}px`;
-                dropdown.style.width = `${rect.width + 20}px`;
-                dropdown.classList.toggle('hidden');
-            }
-        }
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', (event) => {
-            const desktopSelector = document.getElementById('languageSelector');
-            const mobileSelector = document.getElementById('mobileLanguageSelector');
-            
-            if (!desktopSelector?.contains(event.target) && !mobileSelector?.contains(event.target)) {
-                const dropdowns = ['languageDropdown', 'mobileLangDropdown'];
-                dropdowns.forEach(id => {
-                    const dropdown = document.getElementById(id);
-                    if (dropdown) {
-                        dropdown.classList.add('hidden');
-                    }
-                });
-            }
-        });
-
-        // Initialize with stored language preference or default to English
-        document.addEventListener('DOMContentLoaded', () => {
-            const storedLang = localStorage.getItem('preferred-language') || 'en';
-            setLanguage(storedLang);
-        });
-        // Mobile menu toggle
-        const menuButton = document.getElementById('menuButton');
-        const mobileMenu = document.getElementById('mobileMenu');
-        
-        menuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            const icon = menuButton.querySelector('i');
-            icon.classList.toggle('fa-bars');
-            icon.classList.toggle('fa-times');
-        });
-
-        // Form submission
-        const contactForm = document.getElementById('contactForm');
-        contactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const submitButton = contactForm.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-            
-            submitButton.textContent = 'Message Sent!';
-            submitButton.classList.add('bg-green-500');
-            submitButton.classList.remove('bg-primary');
-            
-            contactForm.reset();
-            
-            setTimeout(() => {
-                submitButton.textContent = originalText;
-                submitButton.classList.remove('bg-green-500');
-                submitButton.classList.add('bg-primary');
-            }, 3000);
-        });
-
-        // Scroll reveal animation
-        const observerOptions = {
-            threshold: 0.2
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('opacity-100', 'translate-y-0');
-                    entry.target.classList.remove('opacity-0', 'translate-y-8');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.card').forEach(card => {
-            card.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-700');
-            observer.observe(card);
-        });
-
-        // Set current year in footer
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
+
+
+
 
 
 

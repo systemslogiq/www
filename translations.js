@@ -100,5 +100,107 @@ const translations = {
         phoneLabel: "Telefon:",
         followUs: "Folgen Sie uns",
         allRightsReserved: "Alle Rechte vorbehalten."
+    },
+    es: {
+        // Navigation
+        services: "Servicios",
+        about: "Nosotros",
+        solutions: "Soluciones",
+        contact: "Contacto",
+
+        // Hero Section
+        heroTitle: "Transforme su Negocio con\nSoluciones Inteligentes",
+        heroSubtitle: "Potenciando empresas a través de sistemas innovadores\ny integración de tecnología inteligente",
+        getStarted: "Comenzar",
+
+        // Services Section
+        ourServices: "Nuestros Servicios",
+        systemIntegration: "Integración de Sistemas",
+        systemIntegrationDesc: "Conecte sin problemas sus procesos y sistemas empresariales",
+        businessAnalytics: "Análisis de Negocios",
+        businessAnalyticsDesc: "Información basada en datos para toma de decisiones informadas",
+        processAutomation: "Automatización de Procesos",
+        processAutomationDesc: "Optimice operaciones con automatización inteligente",
+        cloudServices: "Servicios en la Nube",
+        cloudServicesDesc: "Soluciones escalables en la nube para empresas modernas",
+
+        // About Section
+        aboutTitle: "Sobre SystemsLogiq",
+        aboutText: "SystemsLogiq es un proveedor líder de soluciones empresariales inteligentes, ayudando a las organizaciones a optimizar sus operaciones a través de tecnología innovadora y consultoría estratégica. Con años de experiencia en la industria, ofrecemos soluciones personalizadas que impulsan el crecimiento y la eficiencia.",
+
+        // Solutions Section
+        ourSolutions: "Nuestras Soluciones",
+        enterpriseSolutions: "Soluciones Empresariales",
+        enterpriseSolutionsDesc: "Sistemas completos para operaciones a gran escala",
+        digitalTransformation: "Transformación Digital",
+        digitalTransformationDesc: "Guíe su empresa hacia la era digital",
+        processAutomationSol: "Automatización de Procesos",
+        processAutomationSolDesc: "Optimice operaciones con automatización inteligente",
+
+        // Contact Section
+        contactUs: "Contáctenos",
+        name: "Nombre",
+        email: "Correo electrónico",
+        message: "Mensaje",
+        sendMessage: "Enviar Mensaje",
+        messageSent: "¡Mensaje Enviado!",
+
+        // Footer
+        footerTagline: "Transformando empresas a través de soluciones inteligentes",
+        emailLabel: "Correo:",
+        phoneLabel: "Teléfono:",
+        followUs: "Síguenos",
+        allRightsReserved: "Todos los derechos reservados."
+    },
+    fr: {
+        // Navigation
+        services: "Services",
+        about: "À propos",
+        solutions: "Solutions",
+        contact: "Contact",
+
+        // Hero Section
+        heroTitle: "Transformez Votre Entreprise avec\ndes Solutions Intelligentes",
+        heroSubtitle: "Autonomiser les entreprises grâce à des systèmes innovants\net l'intégration de technologies intelligentes",
+        getStarted: "Commencer",
+
+        // Services Section
+        ourServices: "Nos Services",
+        systemIntegration: "Intégration de Systèmes",
+        systemIntegrationDesc: "Connectez harmonieusement vos processus et systèmes d'entreprise",
+        businessAnalytics: "Analyse d'Entreprise",
+        businessAnalyticsDesc: "Insights basés sur les données pour une prise de décision éclairée",
+        processAutomation: "Automatisation des Processus",
+        processAutomationDesc: "Optimisez les opérations avec l'automatisation intelligente",
+        cloudServices: "Services Cloud",
+        cloudServicesDesc: "Solutions cloud évolutives pour les entreprises modernes",
+
+        // About Section
+        aboutTitle: "À propos de SystemsLogiq",
+        aboutText: "SystemsLogiq est un fournisseur leader de solutions d'entreprise intelligentes, aidant les organisations à optimiser leurs opérations grâce à une technologie innovante et des conseils stratégiques. Avec des années d'expérience dans l'industrie, nous fournissons des solutions personnalisées qui favorisent la croissance et l'efficacité.",
+
+        // Solutions Section
+        ourSolutions: "Nos Solutions",
+        enterpriseSolutions: "Solutions d'Entreprise",
+        enterpriseSolutionsDesc: "Systèmes complets pour les opérations à grande échelle",
+        digitalTransformation: "Transformation Numérique",
+        digitalTransformationDesc: "Guidez votre entreprise vers l'ère numérique",
+        processAutomationSol: "Automatisation des Processus",
+        processAutomationSolDesc: "Optimisez les opérations avec l'automatisation intelligente",
+
+        // Contact Section
+        contactUs: "Contactez-nous",
+        name: "Nom",
+        email: "Email",
+        message: "Message",
+        sendMessage: "Envoyer le Message",
+        messageSent: "Message Envoyé !",
+
+        // Footer
+        footerTagline: "Transformer les entreprises grâce à des solutions intelligentes",
+        emailLabel: "Email :",
+        phoneLabel: "Téléphone :",
+        followUs: "Suivez-nous",
+        allRightsReserved: "Tous droits réservés."
     }
 };
