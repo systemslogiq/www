@@ -26,6 +26,7 @@ This Cloud Function handles contact form submissions from the SystemsLogiq websi
 1. Create a [SendGrid account](https://signup.sendgrid.com/) if you don't have one
 
 2. Domain Authentication (Important to prevent email spoofing warnings):
+
    - Go to Settings > Sender Authentication
    - Click "Authenticate Your Domain"
    - Enter your domain (e.g., systemslogiq.com)
@@ -37,6 +38,7 @@ This Cloud Function handles contact form submissions from the SystemsLogiq websi
    - Verify the records are properly configured in SendGrid
 
 3. Configure Sender Identity:
+
    - While in Sender Authentication:
      - Verify your sender email (e.g., noreply@systemslogiq.com)
      - This email must be from the authenticated domain
@@ -76,12 +78,14 @@ npm run verify
 ```
 
 If you see a "spoofing" warning in Gmail:
+
 1. Ensure you've completed the domain authentication steps in SendGrid
 2. Verify all DNS records are properly configured
 3. Wait up to 48 hours for DNS changes to propagate
 4. Run the verification script again
 
 Common Issues:
+
 1. Invalid SendGrid API key
 2. Sender email not verified
 3. Domain authentication incomplete
@@ -104,6 +108,7 @@ Note: Ensure your .env.yaml file contains the proper SendGrid API key, admin ema
 If verification fails, check:
 
 1. SendGrid Setup:
+
    - Verify API key is correct
    - Ensure sender email is verified
    - Check domain authentication status
@@ -111,12 +116,14 @@ If verification fails, check:
    - Check SendGrid account status
 
 2. Environment Variables:
+
    - Check SENDGRID_API_KEY is set
    - Verify ADMIN_EMAIL is correct
    - Verify SENDER_EMAIL is correct
    - Ensure no extra spaces in values
 
 3. Email Spoofing Warnings:
+
    - Complete domain authentication in SendGrid
    - Verify all DNS records are added correctly
    - Use a sender email from the authenticated domain

@@ -44,6 +44,10 @@ const translations = {
     message: 'Message',
     sendMessage: 'Send Message',
     messageSent: 'Message Sent!',
+    sending: 'Sending...',
+    errorTryAgain: 'Error! Please try again',
+    invalidEmail: 'Please enter a valid email address',
+    networkError: 'Network response was not ok',
 
     // Footer
     footerTagline: 'Transforming businesses through intelligent solutions',
@@ -97,6 +101,10 @@ const translations = {
     message: 'Nachricht',
     sendMessage: 'Nachricht senden',
     messageSent: 'Nachricht gesendet!',
+    sending: 'Senden...',
+    errorTryAgain: 'Fehler! Bitte versuchen Sie es erneut',
+    invalidEmail: 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
+    networkError: 'Netzwerkantwort war nicht in Ordnung',
 
     // Footer
     footerTagline: 'Transformation von Unternehmen durch intelligente Lösungen',
@@ -150,6 +158,10 @@ const translations = {
     message: 'Mensaje',
     sendMessage: 'Enviar Mensaje',
     messageSent: '¡Mensaje Enviado!',
+    sending: 'Enviando...',
+    errorTryAgain: '¡Error! Por favor, inténtelo de nuevo',
+    invalidEmail: 'Por favor, introduzca una dirección de correo electrónico válida',
+    networkError: 'La respuesta de la red no fue correcta',
 
     // Footer
     footerTagline: 'Transformando empresas a través de soluciones inteligentes',
@@ -203,6 +215,10 @@ const translations = {
     message: 'Message',
     sendMessage: 'Envoyer le Message',
     messageSent: 'Message Envoyé !',
+    sending: 'Envoi en cours...',
+    errorTryAgain: 'Erreur ! Veuillez réessayer',
+    invalidEmail: 'Veuillez entrer une adresse email valide',
+    networkError: "La réponse du réseau n'était pas correcte",
 
     // Footer
     footerTagline: 'Transformer les entreprises grâce à des solutions intelligentes',

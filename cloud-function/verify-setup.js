@@ -33,13 +33,13 @@ async function verifySetup() {
     try {
       for (const lang of languages) {
         console.log(`\nTesting ${lang.toUpperCase()} emails...`);
-        
+
         // Test notification email
         const notificationMsg = {
           to: [ADMIN_EMAIL, SENDER_EMAIL],
           from: {
             email: SENDER_EMAIL,
-            name: 'SystemsLogiq Contact Form'
+            name: 'SystemsLogiq Contact Form',
           },
           subject: `Contact Form Setup Test - ${lang.toUpperCase()} Notification`,
           text: [
@@ -81,7 +81,7 @@ async function verifySetup() {
             `<li>Ensure ${SENDER_EMAIL} is verified in SendGrid</li>`,
             '</ol>',
             '<p>You should receive this email at both admin and sender addresses.</p>',
-          ].join('\n')
+          ].join('\n'),
         };
 
         // Test thank you email
@@ -89,7 +89,7 @@ async function verifySetup() {
           to: ADMIN_EMAIL, // Using admin email for test
           from: {
             email: SENDER_EMAIL,
-            name: 'SystemsLogiq'
+            name: 'SystemsLogiq',
           },
           subject: `Contact Form Setup Test - ${lang.toUpperCase()} Thank You Email`,
           text: `Dear Test User,
@@ -112,14 +112,11 @@ The SystemsLogiq Team`,
               This is a test message.
             </blockquote>
             <p>Best regards,<br>The SystemsLogiq Team</p>
-          `
+          `,
         };
 
         // Send both test emails for this language
-        await Promise.all([
-          sgMail.send(notificationMsg),
-          sgMail.send(thankYouMsg)
-        ]);
+        await Promise.all([sgMail.send(notificationMsg), sgMail.send(thankYouMsg)]);
 
         console.log(`✓ ${lang.toUpperCase()} test emails sent successfully`);
       }
@@ -140,12 +137,12 @@ The SystemsLogiq Team`,
       console.error('2. Sender email not verified in SendGrid');
       console.error('3. Domain authentication not completed');
       console.error('4. SendGrid account restrictions');
-      
+
       if (error.response) {
         console.error('\nSendGrid API Error:');
         console.error('Status code:', error.response.status);
         console.error('Body:', error.response.body);
-        
+
         if (error.response.status === 403) {
           throw new Error('SendGrid API key does not have permission to send email');
         } else if (error.response.status === 401) {
