@@ -1,4 +1,4 @@
-const { google } = require('googleapis');
+const sgMail = require('@sendgrid/mail');
 
 // Load environment variables from .env file in development
 if (process.env.NODE_ENV !== 'production') {
@@ -6,29 +6,16 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // These will be set as environment variables in the Cloud Function
-const CREDENTIALS = process.env.CREDENTIALS ? JSON.parse(process.env.CREDENTIALS) : null;
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
-// Verify required environment variables and credentials
+// Verify required environment variables
 function checkEnvironment() {
-  if (!CREDENTIALS) {
-    throw new Error('Missing required credentials configuration');
+  if (!SENDGRID_API_KEY) {
+    throw new Error('Missing required SendGrid API key configuration');
   }
   if (!ADMIN_EMAIL) {
     throw new Error('Missing required admin email configuration');
-  }
-
-  // Verify required service account fields
-  const requiredFields = ['client_email', 'private_key', 'project_id'];
-  for (const field of requiredFields) {
-    if (!CREDENTIALS[field]) {
-      throw new Error('Invalid credentials configuration');
-    }
-  }
-
-  // Verify private key format
-  if (!CREDENTIALS.private_key.includes('BEGIN PRIVATE KEY')) {
-    throw new Error('Invalid credentials configuration');
   }
 }
 
@@ -49,51 +36,21 @@ async function sendMail(name, email, messageText) {
   try {
     checkEnvironment();
 
-    // Initialize service account auth
-    const auth = new google.auth.JWT(
-      CREDENTIALS.client_email,
-      null,
-      CREDENTIALS.private_key,
-      ['https://www.googleapis.com/auth/gmail.send'],
-      ADMIN_EMAIL
-    );
+    // Initialize SendGrid with API key
+    sgMail.setApiKey(SENDGRID_API_KEY);
 
-    // Create Gmail API client
-    const gmail = google.gmail({
-      version: 'v1',
-      auth,
-    });
-
-    // Create email message with proper headers
-    const message = [
-      'From: Contact Form <' + ADMIN_EMAIL + '>',
-      'To: ' + ADMIN_EMAIL,
-      'Subject: New Contact Form Submission from ' + sanitizeInput(name),
-      'Content-Type: text/plain; charset=utf-8',
-      '',
-      'Name: ' + sanitizeInput(name),
-      'Email: ' + sanitizeInput(email),
-      'Message: ' + sanitizeInput(messageText),
-    ].join('\n');
-
-    // Encode the message
-    const encodedMessage = Buffer.from(message)
-      .toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
+    // Create email message
+    const msg = {
+      to: ADMIN_EMAIL,
+      from: ADMIN_EMAIL, // Must be verified sender in SendGrid
+      subject: `New Contact Form Submission from ${sanitizeInput(name)}`,
+      text: `Name: ${sanitizeInput(name)}\nEmail: ${sanitizeInput(email)}\nMessage: ${sanitizeInput(messageText)}`,
+    };
 
     try {
-      // Send email using Gmail API
-      const result = await gmail.users.messages.send({
-        userId: ADMIN_EMAIL,
-        requestBody: {
-          raw: encodedMessage,
-        },
-      });
-
+      await sgMail.send(msg);
       console.log('Email sent successfully');
-      return result.data;
+      return { success: true };
     } catch (error) {
       console.error('Email sending failed:', error.message);
       throw new Error('Failed to send email');
@@ -114,7 +71,7 @@ exports.handleFormSubmission = async (req, res) => {
     'X-RateLimit-Limit': '100',
     'X-RateLimit-Remaining': '99',
     'X-RateLimit-Reset': new Date(Date.now() + 3600000).toISOString()
-		};
+  };
 
   // Set all headers
   Object.entries(corsHeaders).forEach(([key, value]) => {
@@ -161,4 +118,3 @@ exports.handleFormSubmission = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while processing your request' });
   }
 };
-

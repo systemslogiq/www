@@ -1,13 +1,13 @@
 # SystemsLogiq Contact Form Handler
 
-This Cloud Function handles contact form submissions from the SystemsLogiq website, sending emails through the info@systemslogiq.com Google Group using Gmail API and service account authentication.
+This Cloud Function handles contact form submissions from the SystemsLogiq website, sending emails through SendGrid.
 
 ## Prerequisites
 
-- Google Cloud Platform account
-- Google Workspace admin access
 - Node.js 16 or higher
 - Google Cloud CLI installed
+- SendGrid account
+- Google Cloud Platform account
 
 ## Setup Instructions
 
@@ -18,59 +18,22 @@ This Cloud Function handles contact form submissions from the SystemsLogiq websi
 3. Enable the required APIs:
    - Navigate to "APIs & Services > Library"
    - Search for and enable:
-     - Gmail API
      - Cloud Functions API
 
-### 2. Service Account Setup
+### 2. SendGrid Setup
 
-1. Go to "IAM & Admin > Service Accounts"
-2. Click "Create Service Account"
-3. Fill in the details:
-   - Service account name: "contact-form-handler"
-   - Service account ID: will auto-generate
-   - Description: "Service account for handling contact form submissions"
-4. Click "Create and Continue"
-5. Skip role assignment
-6. Click "Done"
-7. Find your new service account in the list and click on it
-8. Go to the "Keys" tab
-9. Click "Add Key" > "Create new key"
-10. Choose JSON format
-11. Click "Create" - this will download your service account key file
-12. Save this file as `service-account-key.json` in the cloud-function directory
+1. Create a [SendGrid account](https://signup.sendgrid.com/) if you don't have one
+2. Verify your sender email:
+   - Go to Settings > Sender Authentication
+   - Follow the steps to verify your domain or at least your sender email
+3. Create API Key:
+   - Go to Settings > API Keys
+   - Click "Create API Key"
+   - Name: "SystemsLogiq Contact Form"
+   - Permission: "Restricted Access" with "Mail Send" permissions
+   - Save the API key securely - you won't be able to see it again
 
-### 3. Domain-wide Delegation Setup
-
-This is the most critical part of the setup. Follow these steps exactly:
-
-1. Go to [Google Workspace Admin Console](https://admin.google.com)
-2. Navigate to Security > API Controls
-3. Find "Domain-wide Delegation" and click "Manage Domain Wide Delegation"
-4. Click "Add new"
-5. Configure the delegation:
-   - Find your client_id in service-account-key.json
-   - Client ID: Copy the exact client_id from the file
-   - OAuth Scopes: Copy and paste these exact scopes:
-     ```
-     https://www.googleapis.com/auth/gmail.send,https://www.googleapis.com/auth/gmail.readonly
-     ```
-6. Click "Authorize"
-
-Important Notes:
-
-- The client_id must exactly match what's in your service-account-key.json
-- The scopes must be exactly as shown above (no extra spaces)
-- The service account email should end with @[project-id].iam.gserviceaccount.com
-
-### 4. Admin Email Setup
-
-1. Choose a Google Workspace admin email that will be used for sending
-2. This admin must have:
-   - Super admin or necessary admin privileges
-   - Permission to send email as the group
-   - Access to the Gmail API
-
-### 5. Local Development Setup
+### 3. Local Development Setup
 
 1. Install dependencies:
 
@@ -82,18 +45,12 @@ Important Notes:
 2. Create .env file:
 
    ```bash
-   # Create .env with proper escaping
-   python3 -c '
-   import json
-   creds = json.load(open("service-account-key.json"))
-   print(f"CREDENTIALS={json.dumps(json.dumps(creds))}")
-   ' > .env
-
-   # Add admin email
+   # Create .env with SendGrid API key and admin email
+   echo "SENDGRID_API_KEY=your_sendgrid_api_key_here" > .env
    echo "ADMIN_EMAIL=your-admin@systemslogiq.com" >> .env
    ```
 
-### 6. Verify Setup
+### 4. Verify Setup
 
 Run the verification script to check your configuration:
 
@@ -101,58 +58,45 @@ Run the verification script to check your configuration:
 npm run verify
 ```
 
-If you see "Insufficient Permission" error:
+If you see errors:
 
-1. Verify Domain-wide Delegation:
+1. Common Issues:
+   - Invalid SendGrid API key
+   - Unverified sender email
+   - SendGrid API access restricted
+   - Missing environment variables
 
-   - Check client_id matches exactly
-   - Verify scopes are exactly as shown above
-   - Ensure admin email has proper permissions
+### 5. Deployment
 
-2. Common Issues:
-   - Wrong client_id in delegation setup
-   - Missing or incorrect scopes
-   - Admin email doesn't have sufficient privileges
-   - Gmail API not enabled
-   - Service account key file incorrect
-
-### 7. Deployment
-
-Deploy using the existing .env file:
+Deploy the function:
 
 ```bash
-# Deploy the function using environment variables from .env
-gcloud functions deploy handleFormSubmission --runtime nodejs18 --trigger-http --allow-unauthenticated --region us-central1 --env-vars-file .env.yaml 
+# Deploy the function using environment variables from .env.yaml
+gcloud functions deploy handleFormSubmission --runtime nodejs18 --trigger-http --allow-unauthenticated --region us-central1 --env-vars-file .env.yaml
 ```
 
-Note: The .env file created during setup already contains the properly formatted environment variables needed for deployment.
+Note: Ensure your .env.yaml file contains the proper SendGrid API key and admin email.
 
 ### Troubleshooting
 
 If verification fails, check:
 
-1. Service Account Setup:
+1. SendGrid Setup:
+   - Verify API key is correct
+   - Ensure sender email is verified
+   - Check SendGrid account status
+   - Verify API key has proper permissions
 
-   - Verify service-account-key.json contains correct data
-   - Ensure Gmail API is enabled
-   - Check service account is not disabled
+2. Environment Variables:
+   - Check SENDGRID_API_KEY is set
+   - Verify ADMIN_EMAIL is correct
+   - Ensure no extra spaces in values
 
-2. Domain-wide Delegation:
-
-   - Confirm client_id matches service account
-   - Verify scopes are exactly correct
-   - Check admin console for delegation status
-
-3. Admin Email:
-
-   - Verify it's a proper admin account
-   - Check it has necessary permissions
-   - Ensure it can access Gmail API
-
-4. Common Errors:
-   - "Insufficient Permission": Check domain-wide delegation setup
-   - "Invalid Grant": Verify scopes and client_id
-   - "API Not Enabled": Enable Gmail API in Cloud Console
+3. Common Errors:
+   - "Unauthorized": Check SendGrid API key
+   - "Forbidden": Verify sender email
+   - "Invalid API key": Check API key format
+   - "Sender not verified": Complete sender verification
 
 ## Support
 
@@ -160,12 +104,13 @@ For issues:
 
 1. Run verification script for detailed diagnostics
 2. Check Cloud Function logs
-3. Verify all setup steps carefully
-4. Ensure admin email has proper permissions
+3. Verify SendGrid dashboard for email status
+4. Ensure sender verification is complete
 
 ## Security Notes
 
-- Keep service-account-key.json secure
+- Keep SendGrid API key secure
 - Don't commit credentials to version control
-- Use minimum required scopes
-- Regularly rotate service account keys
+- Use restricted API key permissions
+- Regularly rotate API keys
+- Monitor SendGrid security settings
