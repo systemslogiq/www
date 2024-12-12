@@ -59,6 +59,11 @@ This Cloud Function handles contact form submissions from the SystemsLogiq websi
 
 ### 5. Deploy Cloud Function
 
+Prerequisites:
+- Google Cloud CLI installed
+- Python 3.x installed (required for JSON processing)
+- Node.js 16 or higher
+
 1. Prepare your local environment:
 			```bash
 			# Install Google Cloud CLI if not already installed
@@ -66,32 +71,28 @@ This Cloud Function handles contact form submissions from the SystemsLogiq websi
    # Or visit https://cloud.google.com/sdk/docs/install for other platforms
    
 			# Initialize Google Cloud CLI and set your project
-			gcloud init
+   gcloud init
    
    # Select your project
-   gcloud config set project [YOUR_PROJECT_ID]
-   ```
-
-2. Set up the function directory:
-   ```bash
-   # Create a new directory for the function
-   mkdir -p cloud-function && cd cloud-function
+			gcloud config set project [YOUR_PROJECT_ID]
+			
+   # Navigate to the cloud-function directory
+   cd cloud-function
    
-   # Copy the function files
-   cp path/to/index.js .
-   cp path/to/package.json .
-   
-			# Install dependencies
+   # Install dependencies
 			npm install
 			```
 
-3. Test the function locally:
+2. Test the function locally:
 			```bash
 			# Install the Functions Framework
 			npm install -g @google-cloud/functions-framework
 			
-			# Create a .env file for local testing
-			echo "CREDENTIALS=$(cat path/to/your-service-account-key.json | jq -c '.')" > .env
+			# Place your service account key file in the cloud-function directory
+			# Name it service-account-key.json
+			
+			# Create .env file for local testing (using Python since it's commonly available)
+			python3 -c "import json; print(f'CREDENTIALS={json.dumps(json.load(open(\"service-account-key.json\")))}')" > .env
 			echo "ADMIN_EMAIL=your-admin@systemslogiq.com" >> .env
 			
 			# Start the function locally
@@ -103,26 +104,26 @@ This Cloud Function handles contact form submissions from the SystemsLogiq websi
 					-d '{"name":"Test User","email":"test@example.com","message":"Test message"}'
 			```
 
-4. Prepare for deployment:
+3. Prepare for deployment:
 			```bash
 			# Verify you're in the correct project
 			gcloud config get-value project
 			
-			# Ensure required APIs are enabled
+			# Enable required APIs
 			gcloud services enable \
 					cloudfunctions.googleapis.com \
 					cloudbuild.googleapis.com \
 					gmail.googleapis.com
 			
-			# Convert service account key to one line and store in a temporary file
-			cat path/to/your-service-account-key.json | jq -c '.' > credentials-oneline.json
-			
-			# Verify the credentials file is valid JSON
-			jq '.' credentials-oneline.json
+			# Verify the service account key is valid JSON
+			jq '.' service-account-key.json
 			```
 
-5. Deploy the function:
+4. Deploy the function:
 			```bash
+			# Create a temporary credentials string using Python
+			CREDS=$(python3 -c "import json; print(json.dumps(json.load(open('service-account-key.json'))))")
+			
 			# Deploy with all necessary configurations
 			gcloud functions deploy handleFormSubmission \
 					--runtime nodejs16 \
@@ -133,17 +134,14 @@ This Cloud Function handles contact form submissions from the SystemsLogiq websi
 					--timeout 60s \
 					--min-instances 0 \
 					--max-instances 10 \
-					--set-env-vars CREDENTIALS=$(cat credentials-oneline.json),ADMIN_EMAIL=[Your_Admin_Email] \
+					--set-env-vars CREDENTIALS="$CREDS",ADMIN_EMAIL=[Your_Admin_Email] \
 					--set-cors-allowed-origins="https://systemslogiq.com" \
 					--ingress-settings=all
 			```
 
-6. Verify deployment:
+5. Verify deployment:
 			```bash
-			# Check function status
-			gcloud functions describe handleFormSubmission
-			
-			# Get the function URL
+			# Get the function URL (save this for updating script.js)
 			gcloud functions describe handleFormSubmission --format='get(httpsTrigger.url)'
 			
 			# Test the deployed function
@@ -151,34 +149,58 @@ This Cloud Function handles contact form submissions from the SystemsLogiq websi
 					-H "Content-Type: application/json" \
 					-H "Origin: https://systemslogiq.com" \
 					-d '{"name":"Test User","email":"test@example.com","message":"Test message"}'
-			
-			# View logs
-			gcloud functions logs read handleFormSubmission
 			```
 
-7. Clean up:
+6. Monitor the function:
 			```bash
-			# Remove the temporary credentials file
-			rm credentials-oneline.json
+			# View logs in real-time
+			gcloud functions logs read handleFormSubmission --stream
+			
+			# View recent logs
+			gcloud functions logs read handleFormSubmission --limit=50
 			```
 
-8. Important deployment flags explained:
-			- `--memory 256MB`: Allocates 256MB of memory (increase if needed)
-			- `--timeout 60s`: Sets maximum execution time to 60 seconds
-			- `--min-instances 0`: Allows function to scale to zero (cost-effective)
-			- `--max-instances 10`: Limits maximum concurrent instances
-			- `--set-cors-allowed-origins`: Sets CORS policy
-			- `--ingress-settings=all`: Allows requests from any source (controlled by CORS)
+7. Important Notes:
+			- Keep service-account-key.json secure and do not commit it to version control
+			- Add service-account-key.json to .gitignore
+			- The function URL needs to be updated in script.js after deployment
+			- Memory and instance limits can be adjusted based on usage
 
-9. Troubleshooting deployment:
-			- If deployment fails, check:
-					```bash
-					# View detailed deployment logs
-					gcloud functions deploy handleFormSubmission --verbosity=debug
-					
-					# Check if service account has necessary permissions
-					gcloud projects get-iam-policy [YOUR_PROJECT_ID]
-					```
+8. Update Frontend Code:
+			```bash
+			# Get your function URL
+			FUNCTION_URL=$(gcloud functions describe handleFormSubmission --format='get(httpsTrigger.url)')
+			echo "Cloud Function URL: $FUNCTION_URL"
+			```
+
+			Update the fetch URL in script.js:
+			```javascript
+			// Find this section in script.js
+			fetch('https://us-central1-[YOUR_PROJECT_ID].cloudfunctions.net/handleFormSubmission', {
+			
+			// Replace it with your actual function URL
+			fetch('YOUR_FUNCTION_URL_HERE', {
+			```
+
+9. Troubleshooting:
+			```bash
+			# Check function status
+			gcloud functions describe handleFormSubmission
+			
+			# View detailed deployment logs
+			gcloud functions deploy handleFormSubmission --verbosity=debug
+			
+			# Test CORS configuration
+			curl -X OPTIONS $(gcloud functions describe handleFormSubmission --format='get(httpsTrigger.url)') \
+					-H "Origin: https://systemslogiq.com" \
+					-H "Access-Control-Request-Method: POST" \
+					-H "Access-Control-Request-Headers: Content-Type"
+			
+			# Common issues:
+			# 1. CORS errors - Check the --set-cors-allowed-origins matches your domain
+			# 2. Permission denied - Verify service account permissions
+			# 3. Email not sending - Check ADMIN_EMAIL environment variable
+			```
 
 ### 6. Update Frontend Code
 
@@ -263,4 +285,11 @@ For issues or questions:
 ## License
 
 This project is proprietary and confidential to SystemsLogiq.
+
+
+
+
+
+
+
 
