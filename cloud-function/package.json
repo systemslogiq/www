@@ -4,6 +4,7 @@
   "description": "Contact form handler for SystemsLogiq website",
   "main": "index.js",
   "dependencies": {
+    "@sendgrid/mail": "^8.1.4",
     "googleapis": "^118.0.0"
   },
   "devDependencies": {

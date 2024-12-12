@@ -1,13 +1,14 @@
 # SystemsLogiq Contact Form Handler
 
-This Cloud Function handles contact form submissions from the SystemsLogiq website, sending emails through the info@systemslogiq.com Google Group using Gmail API and service account authentication.
+This Cloud Function handles contact form submissions from the SystemsLogiq website, sending emails through SendGrid.
 
 ## Prerequisites
 
-- Google Cloud Platform account
-- Google Workspace admin access
 - Node.js 16 or higher
 - Google Cloud CLI installed
+- SendGrid account
+- Google Cloud Platform account
+- Domain access for DNS configuration
 
 ## Setup Instructions
 
@@ -18,59 +19,37 @@ This Cloud Function handles contact form submissions from the SystemsLogiq websi
 3. Enable the required APIs:
    - Navigate to "APIs & Services > Library"
    - Search for and enable:
-     - Gmail API
      - Cloud Functions API
 
-### 2. Service Account Setup
+### 2. SendGrid Setup
 
-1. Go to "IAM & Admin > Service Accounts"
-2. Click "Create Service Account"
-3. Fill in the details:
-   - Service account name: "contact-form-handler"
-   - Service account ID: will auto-generate
-   - Description: "Service account for handling contact form submissions"
-4. Click "Create and Continue"
-5. Skip role assignment
-6. Click "Done"
-7. Find your new service account in the list and click on it
-8. Go to the "Keys" tab
-9. Click "Add Key" > "Create new key"
-10. Choose JSON format
-11. Click "Create" - this will download your service account key file
-12. Save this file as `service-account-key.json` in the cloud-function directory
+1. Create a [SendGrid account](https://signup.sendgrid.com/) if you don't have one
 
-### 3. Domain-wide Delegation Setup
+2. Domain Authentication (Important to prevent email spoofing warnings):
+   - Go to Settings > Sender Authentication
+   - Click "Authenticate Your Domain"
+   - Enter your domain (e.g., systemslogiq.com)
+   - Follow the DNS configuration steps:
+     - Add all provided CNAME records to your domain's DNS
+     - Add the custom SPF record if requested
+     - Add the DKIM records
+     - Wait up to 48 hours for DNS changes to propagate
+   - Verify the records are properly configured in SendGrid
 
-This is the most critical part of the setup. Follow these steps exactly:
+3. Configure Sender Identity:
+   - While in Sender Authentication:
+     - Verify your sender email (e.g., noreply@systemslogiq.com)
+     - This email must be from the authenticated domain
+     - Complete any additional verification steps
 
-1. Go to [Google Workspace Admin Console](https://admin.google.com)
-2. Navigate to Security > API Controls
-3. Find "Domain-wide Delegation" and click "Manage Domain Wide Delegation"
-4. Click "Add new"
-5. Configure the delegation:
-   - Find your client_id in service-account-key.json
-   - Client ID: Copy the exact client_id from the file
-   - OAuth Scopes: Copy and paste these exact scopes:
-     ```
-     https://www.googleapis.com/auth/gmail.send,https://www.googleapis.com/auth/gmail.readonly
-     ```
-6. Click "Authorize"
+4. Create API Key:
+   - Go to Settings > API Keys
+   - Click "Create API Key"
+   - Name: "SystemsLogiq Contact Form"
+   - Permission: "Restricted Access" with "Mail Send" permissions
+   - Save the API key securely - you won't be able to see it again
 
-Important Notes:
-
-- The client_id must exactly match what's in your service-account-key.json
-- The scopes must be exactly as shown above (no extra spaces)
-- The service account email should end with @[project-id].iam.gserviceaccount.com
-
-### 4. Admin Email Setup
-
-1. Choose a Google Workspace admin email that will be used for sending
-2. This admin must have:
-   - Super admin or necessary admin privileges
-   - Permission to send email as the group
-   - Access to the Gmail API
-
-### 5. Local Development Setup
+### 3. Local Development Setup
 
 1. Install dependencies:
 
@@ -82,18 +61,13 @@ Important Notes:
 2. Create .env file:
 
    ```bash
-   # Create .env with proper escaping
-   python3 -c '
-   import json
-   creds = json.load(open("service-account-key.json"))
-   print(f"CREDENTIALS={json.dumps(json.dumps(creds))}")
-   ' > .env
-
-   # Add admin email
+   # Create .env with SendGrid configuration
+   echo "SENDGRID_API_KEY=your_sendgrid_api_key_here" > .env
    echo "ADMIN_EMAIL=your-admin@systemslogiq.com" >> .env
+   echo "SENDER_EMAIL=noreply@systemslogiq.com" >> .env
    ```
 
-### 6. Verify Setup
+### 4. Verify Setup
 
 Run the verification script to check your configuration:
 
@@ -101,58 +75,58 @@ Run the verification script to check your configuration:
 npm run verify
 ```
 
-If you see "Insufficient Permission" error:
+If you see a "spoofing" warning in Gmail:
+1. Ensure you've completed the domain authentication steps in SendGrid
+2. Verify all DNS records are properly configured
+3. Wait up to 48 hours for DNS changes to propagate
+4. Run the verification script again
 
-1. Verify Domain-wide Delegation:
+Common Issues:
+1. Invalid SendGrid API key
+2. Sender email not verified
+3. Domain authentication incomplete
+4. DNS records not properly configured
+5. Missing environment variables
 
-   - Check client_id matches exactly
-   - Verify scopes are exactly as shown above
-   - Ensure admin email has proper permissions
+### 5. Deployment
 
-2. Common Issues:
-   - Wrong client_id in delegation setup
-   - Missing or incorrect scopes
-   - Admin email doesn't have sufficient privileges
-   - Gmail API not enabled
-   - Service account key file incorrect
-
-### 7. Deployment
-
-Deploy using the existing .env file:
+Deploy the function:
 
 ```bash
-# Deploy the function using environment variables from .env
-gcloud functions deploy handleFormSubmission --runtime nodejs18 --trigger-http --allow-unauthenticated --region us-central1 --env-vars-file .env.yaml 
+# Deploy the function using environment variables from .env.yaml
+gcloud functions deploy handleFormSubmission --runtime nodejs18 --trigger-http --allow-unauthenticated --region us-central1 --env-vars-file .env.yaml
 ```
 
-Note: The .env file created during setup already contains the properly formatted environment variables needed for deployment.
+Note: Ensure your .env.yaml file contains the proper SendGrid API key, admin email, and sender email.
 
 ### Troubleshooting
 
 If verification fails, check:
 
-1. Service Account Setup:
+1. SendGrid Setup:
+   - Verify API key is correct
+   - Ensure sender email is verified
+   - Check domain authentication status
+   - Verify DNS records are properly configured
+   - Check SendGrid account status
 
-   - Verify service-account-key.json contains correct data
-   - Ensure Gmail API is enabled
-   - Check service account is not disabled
+2. Environment Variables:
+   - Check SENDGRID_API_KEY is set
+   - Verify ADMIN_EMAIL is correct
+   - Verify SENDER_EMAIL is correct
+   - Ensure no extra spaces in values
 
-2. Domain-wide Delegation:
-
-   - Confirm client_id matches service account
-   - Verify scopes are exactly correct
-   - Check admin console for delegation status
-
-3. Admin Email:
-
-   - Verify it's a proper admin account
-   - Check it has necessary permissions
-   - Ensure it can access Gmail API
+3. Email Spoofing Warnings:
+   - Complete domain authentication in SendGrid
+   - Verify all DNS records are added correctly
+   - Use a sender email from the authenticated domain
+   - Wait for DNS propagation (up to 48 hours)
 
 4. Common Errors:
-   - "Insufficient Permission": Check domain-wide delegation setup
-   - "Invalid Grant": Verify scopes and client_id
-   - "API Not Enabled": Enable Gmail API in Cloud Console
+   - "Unauthorized": Check SendGrid API key
+   - "Forbidden": Verify sender email and domain
+   - "Invalid API key": Check API key format
+   - "Sender not verified": Complete sender verification
 
 ## Support
 
@@ -160,12 +134,16 @@ For issues:
 
 1. Run verification script for detailed diagnostics
 2. Check Cloud Function logs
-3. Verify all setup steps carefully
-4. Ensure admin email has proper permissions
+3. Verify SendGrid dashboard for email status
+4. Check domain authentication status
+5. Verify DNS record configuration
 
 ## Security Notes
 
-- Keep service-account-key.json secure
+- Keep SendGrid API key secure
 - Don't commit credentials to version control
-- Use minimum required scopes
-- Regularly rotate service account keys
+- Use restricted API key permissions
+- Regularly rotate API keys
+- Monitor SendGrid security settings
+- Keep DNS records up to date
+- Use authenticated domains for sending

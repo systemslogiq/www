@@ -105,6 +105,7 @@ if (contactForm) {
       name: formData.get('name'),
       email: formData.get('email'),
       message: formData.get('message'),
+      language: localStorage.getItem('preferred-language') || 'en'
     };
 
     // Validate email before submission
