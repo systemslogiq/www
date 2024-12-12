@@ -57,6 +57,7 @@ This is the most critical part of the setup. Follow these steps exactly:
 6. Click "Authorize"
 
 Important Notes:
+
 - The client_id must exactly match what's in your service-account-key.json
 - The scopes must be exactly as shown above (no extra spaces)
 - The service account email should end with @[project-id].iam.gserviceaccount.com
@@ -72,12 +73,14 @@ Important Notes:
 ### 5. Local Development Setup
 
 1. Install dependencies:
+
    ```bash
    cd cloud-function
    npm install
    ```
 
 2. Create .env file:
+
    ```bash
    # Create .env with proper escaping
    python3 -c '
@@ -85,7 +88,7 @@ Important Notes:
    creds = json.load(open("service-account-key.json"))
    print(f"CREDENTIALS={json.dumps(json.dumps(creds))}")
    ' > .env
-   
+
    # Add admin email
    echo "ADMIN_EMAIL=your-admin@systemslogiq.com" >> .env
    ```
@@ -93,12 +96,15 @@ Important Notes:
 ### 6. Verify Setup
 
 Run the verification script to check your configuration:
+
 ```bash
 npm run verify
 ```
 
 If you see "Insufficient Permission" error:
+
 1. Verify Domain-wide Delegation:
+
    - Check client_id matches exactly
    - Verify scopes are exactly as shown above
    - Ensure admin email has proper permissions
@@ -112,32 +118,39 @@ If you see "Insufficient Permission" error:
 
 ### 7. Deployment
 
-Once verification passes:
+Deploy using the existing .env file:
+
 ```bash
+# Deploy the function using environment variables from .env
 gcloud functions deploy handleFormSubmission \
   --runtime nodejs16 \
   --trigger-http \
   --allow-unauthenticated \
   --region us-central1 \
-  --env-vars-file deploy-env.json \
+  --env-vars-file .env \
   --set-cors-allowed-origins="https://systemslogiq.com"
 ```
+
+Note: The .env file created during setup already contains the properly formatted environment variables needed for deployment.
 
 ### Troubleshooting
 
 If verification fails, check:
 
 1. Service Account Setup:
+
    - Verify service-account-key.json contains correct data
    - Ensure Gmail API is enabled
    - Check service account is not disabled
 
 2. Domain-wide Delegation:
+
    - Confirm client_id matches service account
    - Verify scopes are exactly correct
    - Check admin console for delegation status
 
 3. Admin Email:
+
    - Verify it's a proper admin account
    - Check it has necessary permissions
    - Ensure it can access Gmail API
@@ -150,6 +163,7 @@ If verification fails, check:
 ## Support
 
 For issues:
+
 1. Run verification script for detailed diagnostics
 2. Check Cloud Function logs
 3. Verify all setup steps carefully

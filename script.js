@@ -49,9 +49,50 @@ window.addEventListener('scroll', () => {
   lastScroll = currentScroll;
 });
 
+// Email validation function
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+// Show error message under an input field
+function showInputError(input, message) {
+  // Remove any existing error message
+  const existingError = input.parentElement.querySelector('.error-message');
+  if (existingError) {
+    existingError.remove();
+  }
+
+  // Create and add new error message
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'error-message text-red-500 text-sm mt-1';
+  errorDiv.textContent = message;
+  input.parentElement.appendChild(errorDiv);
+  input.classList.add('border-red-500');
+}
+
+// Clear error message and styling
+function clearInputError(input) {
+  const errorMessage = input.parentElement.querySelector('.error-message');
+  if (errorMessage) {
+    errorMessage.remove();
+  }
+  input.classList.remove('border-red-500');
+}
+
 // Form submission handling
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
+  // Add real-time email validation
+  const emailInput = contactForm.querySelector('input[name="email"]');
+  emailInput.addEventListener('input', function() {
+    if (this.value && !isValidEmail(this.value)) {
+      showInputError(this, 'Please enter a valid email address');
+    } else {
+      clearInputError(this);
+    }
+  });
+
   contactForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -65,6 +106,12 @@ if (contactForm) {
       email: formData.get('email'),
       message: formData.get('message'),
     };
+
+    // Validate email before submission
+    if (!isValidEmail(data.email)) {
+      showInputError(emailInput, 'Please enter a valid email address');
+      return;
+    }
 
     // Show loading state
     submitButton.disabled = true;
@@ -90,8 +137,9 @@ if (contactForm) {
         submitButton.textContent = 'Message Sent!';
         submitButton.style.backgroundColor = '#28a745';
 
-        // Reset form
+        // Reset form and clear any error messages
         this.reset();
+        clearInputError(emailInput);
 
         // Reset button after 3 seconds
         setTimeout(() => {

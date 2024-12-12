@@ -34,9 +34,9 @@ async function verifySetup() {
       CREDENTIALS.private_key,
       [
         'https://www.googleapis.com/auth/gmail.send',
-        'https://www.googleapis.com/auth/gmail.readonly'  // Needed for getProfile
+        'https://www.googleapis.com/auth/gmail.readonly', // Needed for getProfile
       ],
-      ADMIN_EMAIL  // User to impersonate
+      ADMIN_EMAIL // User to impersonate
     );
 
     await auth.authorize();
@@ -45,7 +45,7 @@ async function verifySetup() {
     console.log('\n4. Testing Gmail API access...');
     const gmail = google.gmail({
       version: 'v1',
-      auth
+      auth,
     });
 
     try {
@@ -61,22 +61,28 @@ async function verifySetup() {
       console.error('   - Ensure these exact scopes are authorized:');
       console.error('     https://www.googleapis.com/auth/gmail.send');
       console.error('     https://www.googleapis.com/auth/gmail.readonly');
-      
+
       console.error('\n2. Service Account permissions:');
       console.error('   - Gmail API is enabled in Google Cloud Console');
       console.error('   - Service account has proper IAM roles');
       console.error('   - Service account is not disabled');
-      
+
       console.error('\n3. Admin Email configuration:');
       console.error('   - Verify', ADMIN_EMAIL, 'is a Google Workspace admin');
       console.error('   - Admin has necessary privileges to be impersonated');
-      
+
       if (error.message.includes('Delegation denied')) {
-        throw new Error('Domain-wide delegation not configured. Follow the steps above to set up delegation.');
+        throw new Error(
+          'Domain-wide delegation not configured. Follow the steps above to set up delegation.'
+        );
       } else if (error.message.includes('invalid_grant')) {
-        throw new Error('Service account authorization failed. Verify the scopes listed above are properly configured.');
+        throw new Error(
+          'Service account authorization failed. Verify the scopes listed above are properly configured.'
+        );
       } else if (error.message.includes('Insufficient Permission')) {
-        throw new Error('Service account lacks necessary permissions. Check admin privileges and delegation setup.');
+        throw new Error(
+          'Service account lacks necessary permissions. Check admin privileges and delegation setup.'
+        );
       } else {
         throw error;
       }
@@ -98,7 +104,7 @@ async function verifySetup() {
         '- Project ID: ' + CREDENTIALS.project_id,
         '- Admin Email: ' + ADMIN_EMAIL,
         '',
-        'If you receive this email, the setup is working correctly.'
+        'If you receive this email, the setup is working correctly.',
       ].join('\n');
 
       // Encode the message
@@ -112,8 +118,8 @@ async function verifySetup() {
       const result = await gmail.users.messages.send({
         userId: ADMIN_EMAIL,
         requestBody: {
-          raw: encodedMessage
-        }
+          raw: encodedMessage,
+        },
       });
       console.log('✓ Test email sent successfully');
       console.log(`  Message ID: ${result.data.id}`);
@@ -128,7 +134,6 @@ async function verifySetup() {
     }
 
     console.log('\n✅ All checks passed! Your setup is working correctly.');
-
   } catch (error) {
     console.error('\n❌ Setup verification failed:');
     console.error(error.message);
@@ -141,5 +146,3 @@ async function verifySetup() {
 }
 
 verifySetup();
-
-
