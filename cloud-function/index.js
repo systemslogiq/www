@@ -10,6 +10,38 @@ const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const SENDER_EMAIL = process.env.SENDER_EMAIL || 'noreply@systemslogiq.com';
 
+// Email templates for different languages
+const emailTemplates = {
+  en: {
+    subject: 'Thank You for Contacting SystemsLogiq',
+    greeting: 'Dear',
+    thankYou: 'Thank you for reaching out to SystemsLogiq. We have received your message and will get back to you as soon as possible.',
+    messageLabel: 'For your records, here is a copy of your message:',
+    signature: 'Best regards,\nThe SystemsLogiq Team'
+  },
+  de: {
+    subject: 'Vielen Dank für Ihre Kontaktaufnahme mit SystemsLogiq',
+    greeting: 'Sehr geehrte(r)',
+    thankYou: 'Vielen Dank für Ihre Nachricht an SystemsLogiq. Wir haben Ihre Nachricht erhalten und werden uns schnellstmöglich bei Ihnen melden.',
+    messageLabel: 'Zu Ihrer Information finden Sie hier eine Kopie Ihrer Nachricht:',
+    signature: 'Mit freundlichen Grüßen\nIhr SystemsLogiq Team'
+  },
+  es: {
+    subject: 'Gracias por Contactar a SystemsLogiq',
+    greeting: 'Estimado/a',
+    thankYou: 'Gracias por contactar a SystemsLogiq. Hemos recibido su mensaje y nos pondremos en contacto con usted lo antes posible.',
+    messageLabel: 'Para sus registros, aquí está una copia de su mensaje:',
+    signature: 'Saludos cordiales,\nEl Equipo de SystemsLogiq'
+  },
+  fr: {
+    subject: 'Merci d\'avoir Contacté SystemsLogiq',
+    greeting: 'Cher/Chère',
+    thankYou: 'Merci d\'avoir contacté SystemsLogiq. Nous avons bien reçu votre message et nous vous répondrons dans les plus brefs délais.',
+    messageLabel: 'Pour vos dossiers, voici une copie de votre message :',
+    signature: 'Cordialement,\nL\'équipe SystemsLogiq'
+  }
+};
+
 // Verify required environment variables
 function checkEnvironment() {
   if (!SENDGRID_API_KEY) {
@@ -36,12 +68,20 @@ function sanitizeInput(str) {
     .trim();
 }
 
-async function sendMail(name, email, messageText) {
+// Get email template based on language
+function getEmailTemplate(language) {
+  return emailTemplates[language] || emailTemplates.en; // Default to English if language not supported
+}
+
+async function sendMail(name, email, messageText, language = 'en') {
   try {
     checkEnvironment();
 
     // Initialize SendGrid with API key
     sgMail.setApiKey(SENDGRID_API_KEY);
+
+    // Get email template for the specified language
+    const template = getEmailTemplate(language);
 
     // Create notification email for admins
     const notificationMsg = {
@@ -61,32 +101,31 @@ async function sendMail(name, email, messageText) {
       `
     };
 
-    // Create thank you email for the submitter
+    // Create thank you email for the submitter using the appropriate language template
     const thankYouMsg = {
       to: email,
       from: {
         email: SENDER_EMAIL,
         name: 'SystemsLogiq'
       },
-      subject: 'Thank You for Contacting SystemsLogiq',
-      text: `Dear ${sanitizeInput(name)},
+      subject: template.subject,
+      text: `${template.greeting} ${sanitizeInput(name)},
 
-Thank you for reaching out to SystemsLogiq. We have received your message and will get back to you as soon as possible.
+${template.thankYou}
 
-For your records, here is a copy of your message:
+${template.messageLabel}
 
 ${sanitizeInput(messageText)}
 
-Best regards,
-The SystemsLogiq Team`,
+${template.signature}`,
       html: `
-        <p>Dear ${sanitizeInput(name)},</p>
-        <p>Thank you for reaching out to SystemsLogiq. We have received your message and will get back to you as soon as possible.</p>
-        <p>For your records, here is a copy of your message:</p>
+        <p>${template.greeting} ${sanitizeInput(name)},</p>
+        <p>${template.thankYou}</p>
+        <p>${template.messageLabel}</p>
         <blockquote style="border-left: 2px solid #ccc; margin: 10px 0; padding: 10px;">
           ${sanitizeInput(messageText).replace(/\n/g, '<br>')}
         </blockquote>
-        <p>Best regards,<br>The SystemsLogiq Team</p>
+        <p>${template.signature.replace(/\n/g, '<br>')}</p>
       `
     };
 
@@ -138,7 +177,7 @@ exports.handleFormSubmission = async (req, res) => {
   }
 
   try {
-    const { name, email, message: messageText } = req.body;
+    const { name, email, message: messageText, language } = req.body;
 
     // Validate required fields
     if (!name || !email || !messageText) {
@@ -158,7 +197,7 @@ exports.handleFormSubmission = async (req, res) => {
       return;
     }
 
-    await sendMail(name, email, messageText);
+    await sendMail(name, email, messageText, language);
     res.status(200).json({ message: 'Message sent successfully' });
   } catch (error) {
     console.error('Error:', error.message);

@@ -1,6 +1,9 @@
 require('dotenv').config();
 const sgMail = require('@sendgrid/mail');
 
+// Test all supported languages
+const languages = ['en', 'de', 'es', 'fr'];
+
 async function verifySetup() {
   try {
     console.log('\n1. Checking environment variables...');
@@ -26,67 +29,72 @@ async function verifySetup() {
     sgMail.setApiKey(SENDGRID_API_KEY);
     console.log('✓ SendGrid API key format valid');
 
-    console.log('\n3. Testing email sending...');
+    console.log('\n3. Testing email sending in all supported languages...');
     try {
-      // Test notification email
-      const notificationMsg = {
-        to: [ADMIN_EMAIL, SENDER_EMAIL],
-        from: {
-          email: SENDER_EMAIL,
-          name: 'SystemsLogiq Contact Form'
-        },
-        subject: 'Contact Form Setup Test - Notification Email',
-        text: [
-          'This is a test notification email to verify the contact form setup.',
-          '',
-          'Configuration Details:',
-          '- Admin Email: ' + ADMIN_EMAIL,
-          '- Sender Email: ' + SENDER_EMAIL,
-          '',
-          'Important:',
-          '1. If you see a "spoofing" warning in Gmail, you need to:',
-          '   - Complete domain authentication in SendGrid',
-          '   - Verify ownership of ' + SENDER_EMAIL.split('@')[1],
-          '   - Wait up to 48 hours for DNS changes to propagate',
-          '',
-          '2. Ensure ' + SENDER_EMAIL + ' is verified in SendGrid',
-          '',
-          'You should receive this email at both admin and sender addresses.',
-        ].join('\n'),
-        html: [
-          '<h2>Contact Form Setup Test - Notification Email</h2>',
-          '<p>This is a test notification email to verify the contact form setup.</p>',
-          '<h3>Configuration Details:</h3>',
-          '<ul>',
-          `<li><strong>Admin Email:</strong> ${ADMIN_EMAIL}</li>`,
-          `<li><strong>Sender Email:</strong> ${SENDER_EMAIL}</li>`,
-          '</ul>',
-          '<h3>Important:</h3>',
-          '<ol>',
-          '<li>If you see a "spoofing" warning in Gmail, you need to:',
-          '<ul>',
-          '<li>Complete domain authentication in SendGrid</li>',
-          `<li>Verify ownership of ${SENDER_EMAIL.split('@')[1]}</li>`,
-          '<li>Wait up to 48 hours for DNS changes to propagate</li>',
-          '</ul>',
-          '</li>',
-          `<li>Ensure ${SENDER_EMAIL} is verified in SendGrid</li>`,
-          '</ol>',
-          '<p>You should receive this email at both admin and sender addresses.</p>',
-        ].join('\n')
-      };
+      for (const lang of languages) {
+        console.log(`\nTesting ${lang.toUpperCase()} emails...`);
+        
+        // Test notification email
+        const notificationMsg = {
+          to: [ADMIN_EMAIL, SENDER_EMAIL],
+          from: {
+            email: SENDER_EMAIL,
+            name: 'SystemsLogiq Contact Form'
+          },
+          subject: `Contact Form Setup Test - ${lang.toUpperCase()} Notification`,
+          text: [
+            `This is a test notification email (${lang.toUpperCase()}) to verify the contact form setup.`,
+            '',
+            'Configuration Details:',
+            '- Admin Email: ' + ADMIN_EMAIL,
+            '- Sender Email: ' + SENDER_EMAIL,
+            '- Language: ' + lang.toUpperCase(),
+            '',
+            'Important:',
+            '1. If you see a "spoofing" warning in Gmail, you need to:',
+            '   - Complete domain authentication in SendGrid',
+            '   - Verify ownership of ' + SENDER_EMAIL.split('@')[1],
+            '   - Wait up to 48 hours for DNS changes to propagate',
+            '',
+            '2. Ensure ' + SENDER_EMAIL + ' is verified in SendGrid',
+            '',
+            'You should receive this email at both admin and sender addresses.',
+          ].join('\n'),
+          html: [
+            `<h2>Contact Form Setup Test - ${lang.toUpperCase()} Notification</h2>`,
+            `<p>This is a test notification email (${lang.toUpperCase()}) to verify the contact form setup.</p>`,
+            '<h3>Configuration Details:</h3>',
+            '<ul>',
+            `<li><strong>Admin Email:</strong> ${ADMIN_EMAIL}</li>`,
+            `<li><strong>Sender Email:</strong> ${SENDER_EMAIL}</li>`,
+            `<li><strong>Language:</strong> ${lang.toUpperCase()}</li>`,
+            '</ul>',
+            '<h3>Important:</h3>',
+            '<ol>',
+            '<li>If you see a "spoofing" warning in Gmail, you need to:',
+            '<ul>',
+            '<li>Complete domain authentication in SendGrid</li>',
+            `<li>Verify ownership of ${SENDER_EMAIL.split('@')[1]}</li>`,
+            '<li>Wait up to 48 hours for DNS changes to propagate</li>',
+            '</ul>',
+            '</li>',
+            `<li>Ensure ${SENDER_EMAIL} is verified in SendGrid</li>`,
+            '</ol>',
+            '<p>You should receive this email at both admin and sender addresses.</p>',
+          ].join('\n')
+        };
 
-      // Test thank you email
-      const thankYouMsg = {
-        to: ADMIN_EMAIL, // Using admin email for test
-        from: {
-          email: SENDER_EMAIL,
-          name: 'SystemsLogiq'
-        },
-        subject: 'Contact Form Setup Test - Thank You Email',
-        text: `Dear Test User,
+        // Test thank you email
+        const thankYouMsg = {
+          to: ADMIN_EMAIL, // Using admin email for test
+          from: {
+            email: SENDER_EMAIL,
+            name: 'SystemsLogiq'
+          },
+          subject: `Contact Form Setup Test - ${lang.toUpperCase()} Thank You Email`,
+          text: `Dear Test User,
 
-This is a test of the thank you email that will be sent to users who submit the contact form.
+This is a test of the thank you email (${lang.toUpperCase()}) that will be sent to users who submit the contact form.
 
 Thank you for reaching out to SystemsLogiq. We have received your message and will get back to you as soon as possible.
 
@@ -95,28 +103,31 @@ This is a test message.
 
 Best regards,
 The SystemsLogiq Team`,
-        html: `
-          <p>Dear Test User,</p>
-          <p>This is a test of the thank you email that will be sent to users who submit the contact form.</p>
-          <p>Thank you for reaching out to SystemsLogiq. We have received your message and will get back to you as soon as possible.</p>
-          <p>For your records, here is a copy of your message:</p>
-          <blockquote style="border-left: 2px solid #ccc; margin: 10px 0; padding: 10px;">
-            This is a test message.
-          </blockquote>
-          <p>Best regards,<br>The SystemsLogiq Team</p>
-        `
-      };
+          html: `
+            <p>Dear Test User,</p>
+            <p>This is a test of the thank you email (${lang.toUpperCase()}) that will be sent to users who submit the contact form.</p>
+            <p>Thank you for reaching out to SystemsLogiq. We have received your message and will get back to you as soon as possible.</p>
+            <p>For your records, here is a copy of your message:</p>
+            <blockquote style="border-left: 2px solid #ccc; margin: 10px 0; padding: 10px;">
+              This is a test message.
+            </blockquote>
+            <p>Best regards,<br>The SystemsLogiq Team</p>
+          `
+        };
 
-      // Send both test emails
-      await Promise.all([
-        sgMail.send(notificationMsg),
-        sgMail.send(thankYouMsg)
-      ]);
+        // Send both test emails for this language
+        await Promise.all([
+          sgMail.send(notificationMsg),
+          sgMail.send(thankYouMsg)
+        ]);
 
-      console.log('✓ Test emails sent successfully');
+        console.log(`✓ ${lang.toUpperCase()} test emails sent successfully`);
+      }
+
+      console.log('\n✓ All language tests completed successfully');
       console.log('  Check your inbox for:');
-      console.log('  1. Notification email (sent to both admin and sender addresses)');
-      console.log('  2. Thank you email template');
+      console.log('  1. Notification emails (sent to both admin and sender addresses)');
+      console.log('  2. Thank you email templates in different languages');
 
       console.log('\nNote: If you see a "spoofing" warning in Gmail, follow these steps:');
       console.log('1. Go to SendGrid Settings > Sender Authentication');
