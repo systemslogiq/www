@@ -8,6 +8,7 @@ if (process.env.NODE_ENV !== 'production') {
 // These will be set as environment variables in the Cloud Function
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const SENDER_EMAIL = process.env.SENDER_EMAIL || 'noreply@systemslogiq.com';
 
 // Verify required environment variables
 function checkEnvironment() {
@@ -16,6 +17,9 @@ function checkEnvironment() {
   }
   if (!ADMIN_EMAIL) {
     throw new Error('Missing required admin email configuration');
+  }
+  if (!SENDER_EMAIL) {
+    throw new Error('Missing required sender email configuration');
   }
 }
 
@@ -42,9 +46,20 @@ async function sendMail(name, email, messageText) {
     // Create email message
     const msg = {
       to: ADMIN_EMAIL,
-      from: ADMIN_EMAIL, // Must be verified sender in SendGrid
+      from: {
+        email: SENDER_EMAIL,
+        name: 'SystemsLogiq Contact Form'
+      },
+      replyTo: email, // Set reply-to as the contact form submitter's email
       subject: `New Contact Form Submission from ${sanitizeInput(name)}`,
       text: `Name: ${sanitizeInput(name)}\nEmail: ${sanitizeInput(email)}\nMessage: ${sanitizeInput(messageText)}`,
+      // Add HTML version for better email client compatibility
+      html: `
+        <p><strong>Name:</strong> ${sanitizeInput(name)}</p>
+        <p><strong>Email:</strong> ${sanitizeInput(email)}</p>
+        <p><strong>Message:</strong></p>
+        <p>${sanitizeInput(messageText).replace(/\n/g, '<br>')}</p>
+      `
     };
 
     try {
