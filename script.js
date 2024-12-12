@@ -55,26 +55,63 @@ if (contactForm) {
     contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Get form values
-        const formData = new FormData(this);
-        const formValues = Object.fromEntries(formData.entries());
-        
-        // Here you would typically send the data to a server
-        // For demo purposes, we'll just show a success message
         const submitButton = this.querySelector('button[type="submit"]');
         const originalText = submitButton.textContent;
         
-        submitButton.textContent = 'Message Sent!';
-        submitButton.style.backgroundColor = '#28a745';
-        
-        // Reset form
-        this.reset();
-        
-        // Reset button after 3 seconds
-        setTimeout(() => {
-            submitButton.textContent = originalText;
-            submitButton.style.backgroundColor = '';
-        }, 3000);
+        // Get form values
+        const formData = new FormData(this);
+        const data = {
+            name: formData.get('name'),
+            email: formData.get('email'),
+            message: formData.get('message')
+        };
+
+        // Show loading state
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending...';
+        submitButton.style.backgroundColor = '#666';
+
+        // Send to Cloud Function
+        fetch('https://us-central1-systemslogiq.cloudfunctions.net/handleFormSubmission', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(() => {
+            // Show success message
+            submitButton.textContent = 'Message Sent!';
+            submitButton.style.backgroundColor = '#28a745';
+            
+            // Reset form
+            this.reset();
+            
+            // Reset button after 3 seconds
+            setTimeout(() => {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+                submitButton.style.backgroundColor = '';
+            }, 3000);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            submitButton.textContent = 'Error! Please try again';
+            submitButton.style.backgroundColor = '#dc3545';
+            
+            // Reset button after 3 seconds
+            setTimeout(() => {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+                submitButton.style.backgroundColor = '';
+            }, 3000);
+        });
     });
 }
 
@@ -277,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Initialize mobile menu
 createMobileMenu();
+
 
 
 
