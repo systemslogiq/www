@@ -1,0 +1,23 @@
+# Build output
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.*
+
+# Cache directories
+.cache/
+
+# Package files
+package-lock.json
+
+# Other
+.DS_Store
+coverage/

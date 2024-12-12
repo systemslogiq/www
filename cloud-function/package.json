@@ -4,10 +4,17 @@
   "description": "Contact form handler for SystemsLogiq website",
   "main": "index.js",
   "dependencies": {
-    "googleapis": "^118.0.0",
-    "nodemailer": "^6.9.1"
+    "googleapis": "^118.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.7"
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "scripts": {
+    "start": "functions-framework --target=handleFormSubmission",
+    "verify": "node verify-setup.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
