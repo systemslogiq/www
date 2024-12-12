@@ -170,8 +170,8 @@ function toggleLanguageDropdown(isMobile = false) {
 												dropdown.style.top = `${rect.bottom}px`;
 												dropdown.style.position = 'fixed';
 								} else {
-												dropdown.style.top = `${rect.bottom + window.scrollY}px`;
-												dropdown.style.position = 'absolute';
+												dropdown.style.top = `${rect.bottom}px`;
+												dropdown.style.position = 'fixed';
 								}
 								
 								dropdown.style.left = `${rect.left - 10}px`;
@@ -277,6 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Initialize mobile menu
 createMobileMenu();
+
 
 
 
