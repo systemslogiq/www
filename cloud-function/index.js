@@ -43,9 +43,9 @@ async function sendMail(name, email, messageText) {
     // Initialize SendGrid with API key
     sgMail.setApiKey(SENDGRID_API_KEY);
 
-    // Create email message
-    const msg = {
-      to: ADMIN_EMAIL,
+    // Create notification email for admins
+    const notificationMsg = {
+      to: [ADMIN_EMAIL, SENDER_EMAIL], // Send to both emails
       from: {
         email: SENDER_EMAIL,
         name: 'SystemsLogiq Contact Form'
@@ -53,7 +53,6 @@ async function sendMail(name, email, messageText) {
       replyTo: email, // Set reply-to as the contact form submitter's email
       subject: `New Contact Form Submission from ${sanitizeInput(name)}`,
       text: `Name: ${sanitizeInput(name)}\nEmail: ${sanitizeInput(email)}\nMessage: ${sanitizeInput(messageText)}`,
-      // Add HTML version for better email client compatibility
       html: `
         <p><strong>Name:</strong> ${sanitizeInput(name)}</p>
         <p><strong>Email:</strong> ${sanitizeInput(email)}</p>
@@ -62,9 +61,43 @@ async function sendMail(name, email, messageText) {
       `
     };
 
+    // Create thank you email for the submitter
+    const thankYouMsg = {
+      to: email,
+      from: {
+        email: SENDER_EMAIL,
+        name: 'SystemsLogiq'
+      },
+      subject: 'Thank You for Contacting SystemsLogiq',
+      text: `Dear ${sanitizeInput(name)},
+
+Thank you for reaching out to SystemsLogiq. We have received your message and will get back to you as soon as possible.
+
+For your records, here is a copy of your message:
+
+${sanitizeInput(messageText)}
+
+Best regards,
+The SystemsLogiq Team`,
+      html: `
+        <p>Dear ${sanitizeInput(name)},</p>
+        <p>Thank you for reaching out to SystemsLogiq. We have received your message and will get back to you as soon as possible.</p>
+        <p>For your records, here is a copy of your message:</p>
+        <blockquote style="border-left: 2px solid #ccc; margin: 10px 0; padding: 10px;">
+          ${sanitizeInput(messageText).replace(/\n/g, '<br>')}
+        </blockquote>
+        <p>Best regards,<br>The SystemsLogiq Team</p>
+      `
+    };
+
     try {
-      await sgMail.send(msg);
-      console.log('Email sent successfully');
+      // Send both emails
+      await Promise.all([
+        sgMail.send(notificationMsg),
+        sgMail.send(thankYouMsg)
+      ]);
+      
+      console.log('Emails sent successfully');
       return { success: true };
     } catch (error) {
       console.error('Email sending failed:', error.message);

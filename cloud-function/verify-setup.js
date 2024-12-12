@@ -28,15 +28,16 @@ async function verifySetup() {
 
     console.log('\n3. Testing email sending...');
     try {
-      const msg = {
-        to: ADMIN_EMAIL,
+      // Test notification email
+      const notificationMsg = {
+        to: [ADMIN_EMAIL, SENDER_EMAIL],
         from: {
           email: SENDER_EMAIL,
           name: 'SystemsLogiq Contact Form'
         },
-        subject: 'Contact Form Setup Test',
+        subject: 'Contact Form Setup Test - Notification Email',
         text: [
-          'This is a test email to verify the contact form setup.',
+          'This is a test notification email to verify the contact form setup.',
           '',
           'Configuration Details:',
           '- Admin Email: ' + ADMIN_EMAIL,
@@ -50,11 +51,11 @@ async function verifySetup() {
           '',
           '2. Ensure ' + SENDER_EMAIL + ' is verified in SendGrid',
           '',
-          'If you receive this email, the basic setup is working correctly.',
+          'You should receive this email at both admin and sender addresses.',
         ].join('\n'),
         html: [
-          '<h2>Contact Form Setup Test</h2>',
-          '<p>This is a test email to verify the contact form setup.</p>',
+          '<h2>Contact Form Setup Test - Notification Email</h2>',
+          '<p>This is a test notification email to verify the contact form setup.</p>',
           '<h3>Configuration Details:</h3>',
           '<ul>',
           `<li><strong>Admin Email:</strong> ${ADMIN_EMAIL}</li>`,
@@ -71,13 +72,52 @@ async function verifySetup() {
           '</li>',
           `<li>Ensure ${SENDER_EMAIL} is verified in SendGrid</li>`,
           '</ol>',
-          '<p>If you receive this email, the basic setup is working correctly.</p>',
+          '<p>You should receive this email at both admin and sender addresses.</p>',
         ].join('\n')
       };
 
-      await sgMail.send(msg);
-      console.log('✓ Test email sent successfully');
-      console.log('  Check your inbox at ' + ADMIN_EMAIL);
+      // Test thank you email
+      const thankYouMsg = {
+        to: ADMIN_EMAIL, // Using admin email for test
+        from: {
+          email: SENDER_EMAIL,
+          name: 'SystemsLogiq'
+        },
+        subject: 'Contact Form Setup Test - Thank You Email',
+        text: `Dear Test User,
+
+This is a test of the thank you email that will be sent to users who submit the contact form.
+
+Thank you for reaching out to SystemsLogiq. We have received your message and will get back to you as soon as possible.
+
+For your records, here is a copy of your message:
+This is a test message.
+
+Best regards,
+The SystemsLogiq Team`,
+        html: `
+          <p>Dear Test User,</p>
+          <p>This is a test of the thank you email that will be sent to users who submit the contact form.</p>
+          <p>Thank you for reaching out to SystemsLogiq. We have received your message and will get back to you as soon as possible.</p>
+          <p>For your records, here is a copy of your message:</p>
+          <blockquote style="border-left: 2px solid #ccc; margin: 10px 0; padding: 10px;">
+            This is a test message.
+          </blockquote>
+          <p>Best regards,<br>The SystemsLogiq Team</p>
+        `
+      };
+
+      // Send both test emails
+      await Promise.all([
+        sgMail.send(notificationMsg),
+        sgMail.send(thankYouMsg)
+      ]);
+
+      console.log('✓ Test emails sent successfully');
+      console.log('  Check your inbox for:');
+      console.log('  1. Notification email (sent to both admin and sender addresses)');
+      console.log('  2. Thank you email template');
+
       console.log('\nNote: If you see a "spoofing" warning in Gmail, follow these steps:');
       console.log('1. Go to SendGrid Settings > Sender Authentication');
       console.log('2. Complete domain authentication for ' + SENDER_EMAIL.split('@')[1]);
