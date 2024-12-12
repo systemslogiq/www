@@ -105,15 +105,21 @@ async function sendMail(name, email, messageText) {
 }
 
 exports.handleFormSubmission = async (req, res) => {
-  // Set CORS headers
-  res.set('Access-Control-Allow-Origin', 'https://systemslogiq.com');
-  res.set('Access-Control-Allow-Methods', 'POST');
-  res.set('Access-Control-Allow-Headers', 'Content-Type');
-  
-  // Set rate limiting headers
-  res.set('X-RateLimit-Limit', '100');
-  res.set('X-RateLimit-Remaining', '99');
-  res.set('X-RateLimit-Reset', new Date(Date.now() + 3600000).toISOString());
+  // Set CORS headers for all requests
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': 'https://systemslogiq.com',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age': '3600',
+    'X-RateLimit-Limit': '100',
+    'X-RateLimit-Remaining': '99',
+    'X-RateLimit-Reset': new Date(Date.now() + 3600000).toISOString()
+		};
+
+  // Set all headers
+  Object.entries(corsHeaders).forEach(([key, value]) => {
+    res.set(key, value);
+  });
 
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
@@ -155,3 +161,4 @@ exports.handleFormSubmission = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while processing your request' });
   }
 };
+

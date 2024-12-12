@@ -122,13 +122,7 @@ Deploy using the existing .env file:
 
 ```bash
 # Deploy the function using environment variables from .env
-gcloud functions deploy handleFormSubmission \
-  --runtime nodejs16 \
-  --trigger-http \
-  --allow-unauthenticated \
-  --region us-central1 \
-  --env-vars-file .env \
-  --set-cors-allowed-origins="https://systemslogiq.com"
+gcloud functions deploy handleFormSubmission --runtime nodejs18 --trigger-http --allow-unauthenticated --region us-central1 --env-vars-file .env.yaml 
 ```
 
 Note: The .env file created during setup already contains the properly formatted environment variables needed for deployment.

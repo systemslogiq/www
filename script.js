@@ -119,7 +119,7 @@ if (contactForm) {
     submitButton.style.backgroundColor = '#666';
 
     // Send to Cloud Function
-    fetch('https://us-central1-systemslogiq.cloudfunctions.net/handleFormSubmission', {
+    fetch('https://us-central1-turing-mark-444500-q4.cloudfunctions.net/handleFormSubmission', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -367,3 +367,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Initialize mobile menu
 createMobileMenu();
+
