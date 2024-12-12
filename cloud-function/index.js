@@ -15,31 +15,35 @@ const emailTemplates = {
   en: {
     subject: 'Thank You for Contacting SystemsLogiq',
     greeting: 'Dear',
-    thankYou: 'Thank you for reaching out to SystemsLogiq. We have received your message and will get back to you as soon as possible.',
+    thankYou:
+      'Thank you for reaching out to SystemsLogiq. We have received your message and will get back to you as soon as possible.',
     messageLabel: 'For your records, here is a copy of your message:',
-    signature: 'Best regards,\nThe SystemsLogiq Team'
+    signature: 'Best regards,\nThe SystemsLogiq Team',
   },
   de: {
     subject: 'Vielen Dank für Ihre Kontaktaufnahme mit SystemsLogiq',
     greeting: 'Sehr geehrte(r)',
-    thankYou: 'Vielen Dank für Ihre Nachricht an SystemsLogiq. Wir haben Ihre Nachricht erhalten und werden uns schnellstmöglich bei Ihnen melden.',
+    thankYou:
+      'Vielen Dank für Ihre Nachricht an SystemsLogiq. Wir haben Ihre Nachricht erhalten und werden uns schnellstmöglich bei Ihnen melden.',
     messageLabel: 'Zu Ihrer Information finden Sie hier eine Kopie Ihrer Nachricht:',
-    signature: 'Mit freundlichen Grüßen\nIhr SystemsLogiq Team'
+    signature: 'Mit freundlichen Grüßen\nIhr SystemsLogiq Team',
   },
   es: {
     subject: 'Gracias por Contactar a SystemsLogiq',
     greeting: 'Estimado/a',
-    thankYou: 'Gracias por contactar a SystemsLogiq. Hemos recibido su mensaje y nos pondremos en contacto con usted lo antes posible.',
+    thankYou:
+      'Gracias por contactar a SystemsLogiq. Hemos recibido su mensaje y nos pondremos en contacto con usted lo antes posible.',
     messageLabel: 'Para sus registros, aquí está una copia de su mensaje:',
-    signature: 'Saludos cordiales,\nEl Equipo de SystemsLogiq'
+    signature: 'Saludos cordiales,\nEl Equipo de SystemsLogiq',
   },
   fr: {
-    subject: 'Merci d\'avoir Contacté SystemsLogiq',
+    subject: "Merci d'avoir Contacté SystemsLogiq",
     greeting: 'Cher/Chère',
-    thankYou: 'Merci d\'avoir contacté SystemsLogiq. Nous avons bien reçu votre message et nous vous répondrons dans les plus brefs délais.',
+    thankYou:
+      "Merci d'avoir contacté SystemsLogiq. Nous avons bien reçu votre message et nous vous répondrons dans les plus brefs délais.",
     messageLabel: 'Pour vos dossiers, voici une copie de votre message :',
-    signature: 'Cordialement,\nL\'équipe SystemsLogiq'
-  }
+    signature: "Cordialement,\nL'équipe SystemsLogiq",
+  },
 };
 
 // Verify required environment variables
@@ -88,7 +92,7 @@ async function sendMail(name, email, messageText, language = 'en') {
       to: [ADMIN_EMAIL, SENDER_EMAIL], // Send to both emails
       from: {
         email: SENDER_EMAIL,
-        name: 'SystemsLogiq Contact Form'
+        name: 'SystemsLogiq Contact Form',
       },
       replyTo: email, // Set reply-to as the contact form submitter's email
       subject: `New Contact Form Submission from ${sanitizeInput(name)}`,
@@ -98,7 +102,7 @@ async function sendMail(name, email, messageText, language = 'en') {
         <p><strong>Email:</strong> ${sanitizeInput(email)}</p>
         <p><strong>Message:</strong></p>
         <p>${sanitizeInput(messageText).replace(/\n/g, '<br>')}</p>
-      `
+      `,
     };
 
     // Create thank you email for the submitter using the appropriate language template
@@ -106,7 +110,7 @@ async function sendMail(name, email, messageText, language = 'en') {
       to: email,
       from: {
         email: SENDER_EMAIL,
-        name: 'SystemsLogiq'
+        name: 'SystemsLogiq',
       },
       subject: template.subject,
       text: `${template.greeting} ${sanitizeInput(name)},
@@ -126,16 +130,13 @@ ${template.signature}`,
           ${sanitizeInput(messageText).replace(/\n/g, '<br>')}
         </blockquote>
         <p>${template.signature.replace(/\n/g, '<br>')}</p>
-      `
+      `,
     };
 
     try {
       // Send both emails
-      await Promise.all([
-        sgMail.send(notificationMsg),
-        sgMail.send(thankYouMsg)
-      ]);
-      
+      await Promise.all([sgMail.send(notificationMsg), sgMail.send(thankYouMsg)]);
+
       console.log('Emails sent successfully');
       return { success: true };
     } catch (error) {
@@ -157,7 +158,7 @@ exports.handleFormSubmission = async (req, res) => {
     'Access-Control-Max-Age': '3600',
     'X-RateLimit-Limit': '100',
     'X-RateLimit-Remaining': '99',
-    'X-RateLimit-Reset': new Date(Date.now() + 3600000).toISOString()
+    'X-RateLimit-Reset': new Date(Date.now() + 3600000).toISOString(),
   };
 
   // Set all headers

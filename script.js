@@ -85,9 +85,12 @@ const contactForm = document.getElementById('contactForm');
 if (contactForm) {
   // Add real-time email validation
   const emailInput = contactForm.querySelector('input[name="email"]');
-  emailInput.addEventListener('input', function() {
+  emailInput.addEventListener('input', function () {
     if (this.value && !isValidEmail(this.value)) {
-      showInputError(this, 'Please enter a valid email address');
+      showInputError(
+        this,
+        translations[localStorage.getItem('preferred-language') || 'en'].invalidEmail
+      );
     } else {
       clearInputError(this);
     }
@@ -105,18 +108,22 @@ if (contactForm) {
       name: formData.get('name'),
       email: formData.get('email'),
       message: formData.get('message'),
-      language: localStorage.getItem('preferred-language') || 'en'
+      language: localStorage.getItem('preferred-language') || 'en',
     };
 
     // Validate email before submission
     if (!isValidEmail(data.email)) {
-      showInputError(emailInput, 'Please enter a valid email address');
+      showInputError(
+        emailInput,
+        translations[localStorage.getItem('preferred-language') || 'en'].invalidEmail
+      );
       return;
     }
 
     // Show loading state
     submitButton.disabled = true;
-    submitButton.textContent = 'Sending...';
+    submitButton.textContent =
+      translations[localStorage.getItem('preferred-language') || 'en'].sending;
     submitButton.style.backgroundColor = '#666';
 
     // Send to Cloud Function
@@ -129,13 +136,16 @@ if (contactForm) {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(
+            translations[localStorage.getItem('preferred-language') || 'en'].networkError
+          );
         }
         return response.json();
       })
       .then(() => {
         // Show success message
-        submitButton.textContent = 'Message Sent!';
+        submitButton.textContent =
+          translations[localStorage.getItem('preferred-language') || 'en'].messageSent;
         submitButton.style.backgroundColor = '#28a745';
 
         // Reset form and clear any error messages
@@ -151,7 +161,8 @@ if (contactForm) {
       })
       .catch((error) => {
         console.error('Error:', error);
-        submitButton.textContent = 'Error! Please try again';
+        submitButton.textContent =
+          translations[localStorage.getItem('preferred-language') || 'en'].errorTryAgain;
         submitButton.style.backgroundColor = '#dc3545';
 
         // Reset button after 3 seconds
@@ -354,10 +365,135 @@ if (menuButton && mobileMenu) {
   });
 }
 
-// Initialize with stored language preference or default to English
-document.addEventListener('DOMContentLoaded', () => {
-  const storedLang = localStorage.getItem('preferred-language') || 'en';
-  setLanguage(storedLang);
+// Map country codes to supported languages
+const countryToLanguage = {
+  // German-speaking countries
+  DE: 'de', // Germany
+  AT: 'de', // Austria
+  CH: 'de', // Switzerland
+  LI: 'de', // Liechtenstein
+
+  // Spanish-speaking countries
+  ES: 'es', // Spain
+  MX: 'es', // Mexico
+  AR: 'es', // Argentina
+  BO: 'es', // Bolivia
+  CL: 'es', // Chile
+  CO: 'es', // Colombia
+  CR: 'es', // Costa Rica
+  CU: 'es', // Cuba
+  DO: 'es', // Dominican Republic
+  EC: 'es', // Ecuador
+  SV: 'es', // El Salvador
+  GT: 'es', // Guatemala
+  HN: 'es', // Honduras
+  NI: 'es', // Nicaragua
+  PA: 'es', // Panama
+  PY: 'es', // Paraguay
+  PE: 'es', // Peru
+  PR: 'es', // Puerto Rico
+  UY: 'es', // Uruguay
+  VE: 'es', // Venezuela
+
+  // French-speaking countries
+  FR: 'fr', // France
+  BE: 'fr', // Belgium
+  CH: 'fr', // Switzerland
+  LU: 'fr', // Luxembourg
+  MC: 'fr', // Monaco
+  BF: 'fr', // Burkina Faso
+  BI: 'fr', // Burundi
+  BJ: 'fr', // Benin
+  CI: 'fr', // Côte d'Ivoire
+  CD: 'fr', // DR Congo
+  GA: 'fr', // Gabon
+  GN: 'fr', // Guinea
+  ML: 'fr', // Mali
+  NE: 'fr', // Niger
+  SN: 'fr', // Senegal
+  TG: 'fr', // Togo
+};
+
+// Function to get user's language based on location
+async function detectUserLanguage() {
+  try {
+    // Create a timeout promise
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timeout')), 5000)
+    );
+
+    // Create the fetch promise with error handling
+    const fetchPromise = fetch('https://ipapi.co/json/').then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    });
+
+    // Race between fetch and timeout
+    const data = await Promise.race([fetchPromise, timeout]);
+
+    // Validate the response data
+    if (!data || !data.country_code) {
+      throw new Error('Invalid response data');
+    }
+
+    const countryCode = data.country_code.toUpperCase();
+
+    // Get language based on country code, fallback to browser language or 'en'
+    const mappedLanguage = countryToLanguage[countryCode];
+    if (mappedLanguage) {
+      return mappedLanguage;
+    }
+
+    // If country not mapped, try browser language
+    const browserLang = navigator.language.split('-')[0];
+    return ['en', 'de', 'es', 'fr'].includes(browserLang) ? browserLang : 'en';
+  } catch (error) {
+    console.error('Error detecting user language:', error);
+
+    // On error, try browser language before falling back to English
+    try {
+      const browserLang = navigator.language.split('-')[0];
+      return ['en', 'de', 'es', 'fr'].includes(browserLang) ? browserLang : 'en';
+    } catch {
+      return 'en';
+    }
+  }
+}
+
+// Initialize with stored language preference, location-based language, or default to English
+document.addEventListener('DOMContentLoaded', async () => {
+  // Show loading state
+  const languageButtons = document.querySelectorAll(
+    '#languageSelector button, #mobileLanguageSelector button'
+  );
+  languageButtons.forEach((button) => {
+    button.style.opacity = '0.5';
+    button.disabled = true;
+  });
+
+  try {
+    // First check if user has a stored preference
+    const storedLang = localStorage.getItem('preferred-language');
+
+    if (storedLang) {
+      setLanguage(storedLang);
+    } else {
+      // If no stored preference, detect based on location
+      const detectedLang = await detectUserLanguage();
+      setLanguage(detectedLang);
+    }
+  } catch (error) {
+    console.error('Error initializing language:', error);
+    setLanguage('en'); // Fallback to English
+  } finally {
+    // Remove loading state
+    languageButtons.forEach((button) => {
+      button.style.opacity = '1';
+      button.disabled = false;
+    });
+  }
 
   // Set current year in footer
   const currentYearElement = document.getElementById('currentYear');
@@ -368,4 +504,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Initialize mobile menu
 createMobileMenu();
-
